@@ -50,7 +50,7 @@ const loginUser=asyncWrapper(async(req,res)=>{
      const {error}=loginValidation(req.body);
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
      const user = await User.findOne({ email });
-     if(!user) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     if(!user) throw new CustomError("User not found",StatusCodes.FORBIDDEN);
      if(!user.verified) throw new CustomError("Email not verified",StatusCodes.FORBIDDEN); 
      const isValid=await user.comparePassword(password);
      if(!isValid) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
