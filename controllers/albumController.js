@@ -2,7 +2,7 @@ const asyncWrapper=require('../error/asyncWrapper');
 const {validateAlbum,validateObjectId}=require("../utils/joiValidate");
 const CustomError = require("../error/custom");
 const {StatusCodes}=require("http-status-codes");
-const uploadFile = require('../utils/cloudinary');
+const {uploadFile} = require('../utils/cloudinary');
 const Album=require("../models/album");
 
 //create album
