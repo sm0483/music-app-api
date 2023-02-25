@@ -12,6 +12,7 @@ const createAlbum=asyncWrapper(async(req,res,next)=>{
     const data=JSON.parse(req.body.data);
     const {error}=validateAlbum(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
+    if(!req.files || !req.files.albumImage) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
     const url=await uploadFile(req.files.albumImage);
     const albumData={...data,artistId,albumImage:url}
     const album=await Album.create(albumData);
