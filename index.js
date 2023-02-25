@@ -22,6 +22,7 @@ const userRoute=require("./routes/userAuthRoute");
 const adminRoute=require("./routes/adminAuthRoute");
 const genreRoute=require("./routes/genreRoute");
 const languageRoute=require("./routes/languageRoute");
+const albumRoute=require("./routes/albumRoute");
 
 
 //error handler
@@ -79,7 +80,7 @@ app.use("/api/v1/user",userRoute)
 app.use("/api/v1/admin",adminRoute)
 app.use("/api/v1/genre",genreRoute);
 app.use("/api/v1/language",languageRoute);
-
+app.use("/api/v1/album",albumRoute);
 
 
 
