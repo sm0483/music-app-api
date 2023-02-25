@@ -20,6 +20,8 @@ app.use(morgan('dev'));
 
 const userRoute=require("./routes/userAuthRoute");
 const adminRoute=require("./routes/adminAuthRoute");
+const genreRoute=require("./routes/genreRoute");
+const languageRoute=require("./routes/languageRoute");
 
 
 //error handler
@@ -75,6 +77,9 @@ app.listen(port, () => console.log(`http://127.0.0.1:${port}`));
 
 app.use("/api/v1/user",userRoute)
 app.use("/api/v1/admin",adminRoute)
+app.use("/api/v1/genre",genreRoute);
+app.use("/api/v1/language",languageRoute);
+
 
 
 
