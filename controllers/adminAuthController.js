@@ -50,8 +50,8 @@ const loginAdmin=asyncWrapper(async(req,res)=>{
      const {error}=loginValidation(req.body);
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
      const admin = await Admin.findOne({ email });
-     if(!admin.verified) throw new CustomError("Email not verified",StatusCodes.FORBIDDEN); 
      if(!admin) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     if(!admin.verified) throw new CustomError("Email not verified",StatusCodes.FORBIDDEN); 
      const isValid=await admin.comparePassword(password);
      if(!isValid) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
      const id=admin._id.toString();
