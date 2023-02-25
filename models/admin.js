@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 const bcrypt = require('bcryptjs');
 
 
-const adminSchema=new mongoose.Schema({
+const artistSchema=new mongoose.Schema({
     name:{
         type:String,
         required:[true,'Name should be present']
@@ -23,14 +23,14 @@ const adminSchema=new mongoose.Schema({
 },{timestamps:true});
 
 
-adminSchema.pre("save", async function () {
+artistSchema.pre("save", async function () {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
 
 
-adminSchema.methods.comparePassword = async function (candidatePassword) {
+artistSchema.methods.comparePassword = async function (candidatePassword) {
     const isMatch = await bcrypt.compare(candidatePassword, this.password);
     return isMatch;
 };
@@ -38,4 +38,4 @@ adminSchema.methods.comparePassword = async function (candidatePassword) {
 
 
 
-module.exports=mongoose.model("Admin",adminSchema);
+module.exports=mongoose.model("Artist",artistSchema);

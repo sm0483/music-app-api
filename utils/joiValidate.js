@@ -26,7 +26,9 @@ const updateUserValidation=(data)=>{
 
 const updatePasswordValidation=(data)=>{
   const schema=joi.object({
-    password: joi.string().min(6).required(),
+    currentPassword: joi.string().min(6).required(),
+    newPassword: joi.string().min(6).required(),
+
   })
   return schema.validate(data);
 }
@@ -39,6 +41,22 @@ const validateObjectId=(data)=>{
   return schema.validate(data);
 }
 
+const validateGenre=(data)=>{
+  const schema=joi.object({
+    genreName:joi.string().min(2).required()
+  })
+
+  return schema.validate(data);
+}
+
+const validateLanguage=(data)=>{
+  const schema=joi.object({
+    languageName:joi.string().min(2).required()
+  })
+
+  return schema.validate(data);
+}
+
 
 
 
@@ -46,6 +64,7 @@ module.exports = {
   registerValidation, 
   loginValidation,updateUserValidation,
   updatePasswordValidation,
-  validateObjectId
+  validateObjectId,validateGenre,
+  validateLanguage
 };
 

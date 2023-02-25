@@ -85,11 +85,13 @@ const loginUser=asyncWrapper(async(req,res)=>{
  const updatePassword=asyncWrapper(async(req,res)=>{
      const {id}=req.user;
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
-     let {password}=req.body;
+     let {currentPassword,newPassword}=req.body;
      const {error}=updatePasswordValidation(req.body);
+     const user = await User.findById(req.user.id);
+     const isValid=await user.comparePassword(currentPassword);
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);  
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
-     password=await hashPassword(password);
+     password=await hashPassword(newPassword);
      const response=await User.findOneAndUpdate({_id:id},{password},{runValidators:true,new:true});
      res.status(StatusCodes.OK).json({
          message:"Password successfully updated"
@@ -97,6 +99,7 @@ const loginUser=asyncWrapper(async(req,res)=>{
  })
  
  
+
  const logoutUser=asyncWrapper(async(req,res)=>{
      const accessToken="";
      res.status(StatusCodes.OK).json({accessToken,message:"Logged out"}); 
