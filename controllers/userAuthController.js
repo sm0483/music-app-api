@@ -66,6 +66,9 @@ const loginUser=asyncWrapper(async(req,res)=>{
     let response=await User.findById(id);
     response = response.toObject();
     delete response.password;
+    delete response.createdAt;
+    delete response.updatedAt;
+     delete response.__v;
     if(!response) throw new CustomError("No user found",StatusCodes.BAD_REQUEST);
     res.status(StatusCodes.OK).json(response)
  })

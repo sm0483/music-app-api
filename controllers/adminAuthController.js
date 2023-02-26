@@ -66,6 +66,9 @@ const loginAdmin=asyncWrapper(async(req,res)=>{
     let response=await Admin.findById(id);
     response = response.toObject();
     delete response.password;
+    delete response.createdAt;
+    delete response.updatedAt;
+     delete response.__v;
     if(!response) throw new CustomError("No admin found",StatusCodes.BAD_REQUEST);
     res.status(StatusCodes.OK).json(response)
  })
