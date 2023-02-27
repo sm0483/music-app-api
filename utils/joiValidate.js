@@ -61,7 +61,6 @@ const validateLanguage=(data)=>{
 const validateAlbum=(data)=>{
   const schema=joi.object({
     albumName:joi.string().min(2).required(),
-    artistName:joi.string().hex().length(24).required()
   })
   
   return schema.validate(data);

@@ -8,9 +8,10 @@ const {
 }=require("../controllers/albumController");
 
 const {verifyAdminToken}=require("../middleware/verifyToken");
+const upload=require("../utils/multer");
 
 
-router.route('/').post(verifyAdminToken,createAlbum).get(getAllAlbums);
+router.route('/').post(verifyAdminToken,upload.single('albumImage'),createAlbum).get(getAllAlbums);
 router.route('/:albumId').delete(verifyAdminToken,deleteAlbum).get(getAlbumById);
 
 

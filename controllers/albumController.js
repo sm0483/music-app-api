@@ -6,22 +6,22 @@ const {uploadFile} = require('../utils/cloudinary');
 const Album=require("../models/album");
 
 //create album
-const createAlbum=asyncWrapper(async(req,res,next)=>{
+const createAlbum=asyncWrapper(async(req,res)=>{
     const artistId=req.admin.id;
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     const data=JSON.parse(req.body.data);
     const {error}=validateAlbum(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-    if(!req.files || !req.files.albumImage) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
-    const url=await uploadFile(req.files.albumImage);
-    const albumData={...data,artistId,albumImage:url}
+    if(!req.file) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
+    const url=await uploadFile(req.file);
+    const albumData={...data,artistName:artistId,albumImage:url}
     const album=await Album.create(albumData);
     res.status(StatusCodes.CREATED).json(album)
 })
 
 //delete album
 
-const deleteAlbum=asyncWrapper(async(req,res,next)=>{
+const deleteAlbum=asyncWrapper(async(req,res)=>{
     const {albumId}=req.params;
     const {error}=validateObjectId({id:albumId});
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
@@ -32,7 +32,7 @@ const deleteAlbum=asyncWrapper(async(req,res,next)=>{
 
 //get album by id
 
-const getAlbumById=asyncWrapper(async(req,res,next)=>{
+const getAlbumById=asyncWrapper(async(req,res)=>{
     const {albumId}=req.params;
     const {error}=validateObjectId({id:albumId});
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
@@ -43,7 +43,7 @@ const getAlbumById=asyncWrapper(async(req,res,next)=>{
 
 //get all albums
 
-const getAllAlbums=asyncWrapper(async(req,res,next)=>{
+const getAllAlbums=asyncWrapper(async(req,res)=>{
     const albums=await Album.find();
     res.status(StatusCodes.OK).json(albums);
 })

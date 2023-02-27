@@ -5,7 +5,6 @@ const dotenv = require("dotenv");
 const root_dir = __dirname.split('src')[0]
 dotenv.config({ path: path.join(root_dir, `.env`) });
 const {connectDb} = require("./config/db");
-const fileUpload = require('express-fileupload');
 const xss=require('xss-clean');
 const helmet=require('helmet');
 const rateLimit=require('express-rate-limit')
@@ -23,6 +22,7 @@ const adminRoute=require("./routes/adminAuthRoute");
 const genreRoute=require("./routes/genreRoute");
 const languageRoute=require("./routes/languageRoute");
 const albumRoute=require("./routes/albumRoute");
+const songRoute=require("./routes/musicRoute");
 
 
 //error handler
@@ -40,15 +40,8 @@ app.use(rateLimit({
 }))
 app.use(express.json());
 app.use(express.static("./public"));
-app.use(fileUpload({
-  useTempFiles:true,
-  limits: { fileSize: 50 * 1024 * 1024 },
-}));
 
-
-
-
-
+  
 
 app.get('/api/v1/live',(req, res) => {
   return res.status(200).json({ message: "alive" })
@@ -81,6 +74,7 @@ app.use("/api/v1/admin",adminRoute)
 app.use("/api/v1/genre",genreRoute);
 app.use("/api/v1/language",languageRoute);
 app.use("/api/v1/album",albumRoute);
+app.use("/api/v1/song",songRoute)
 
 
 
