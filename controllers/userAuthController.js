@@ -88,11 +88,13 @@ const loginUser=asyncWrapper(async(req,res)=>{
  const updatePassword=asyncWrapper(async(req,res)=>{
      const {id}=req.user;
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
-     let {currentPassword,newPassword}=req.body;
      const {error}=updatePasswordValidation(req.body);
-     const user = await User.findById(req.user.id);
-     const isValid=await user.comparePassword(currentPassword);
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);  
+     let {currentPassword,newPassword}=req.body;
+     const user = await User.findById(req.user.id);
+     if(!user) throw new CustomError("Invalid credentials",StatusCodes.FORBIDDEN);
+     const isValid=await user.comparePassword(currentPassword);
+     if(!isValid) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
      password=await hashPassword(newPassword);
      const response=await User.findOneAndUpdate({_id:id},{password},{runValidators:true,new:true});
