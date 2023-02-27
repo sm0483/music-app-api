@@ -36,7 +36,7 @@ const getAlbumById=asyncWrapper(async(req,res)=>{
     const {albumId}=req.params;
     const {error}=validateObjectId({id:albumId});
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-    const album=await Album.findById(albumId);
+    const album=await Album.findById(albumId).populate('artistName','name');
     if(!album) throw new CustomError("Album not found",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(album);
 })
