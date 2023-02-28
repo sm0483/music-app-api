@@ -18,7 +18,6 @@ const musicSchema=new mongoose.Schema({
     },
     songImage:{
         type:String,
-        required:true
     },
     songFile:{
         type:String,

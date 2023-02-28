@@ -2,7 +2,7 @@ const asyncWrapper=require('../error/asyncWrapper');
 const {validateAlbum,validateObjectId}=require("../utils/joiValidate");
 const CustomError = require("../error/custom");
 const {StatusCodes}=require("http-status-codes");
-const {uploadFile} = require('../utils/cloudinary');
+const uploadImage = require('../utils/uploadImage');
 const Album=require("../models/album");
 
 //create album
@@ -13,10 +13,10 @@ const createAlbum=asyncWrapper(async(req,res)=>{
     const {error}=validateAlbum(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
     if(!req.file) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
-    const url=await uploadFile(req.file);
+    const url=await uploadImage(req.file.path);
     const albumData={...data,artistName:artistId,albumImage:url}
     const album=await Album.create(albumData);
-    res.status(StatusCodes.CREATED).json(album)
+    res.status(StatusCodes.CREATED).json(album);
 })
 
 //delete album

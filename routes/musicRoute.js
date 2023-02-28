@@ -1,14 +1,17 @@
 const express=require('express');
 const router=express.Router();
 const {
-    createSong
+    uploadSong,
+    uploadSongImage,
+    deleteSong
 }=require("../controllers/musicController");
+const upload=require("../utils/multer");
 
 const {verifyAdminToken}=require("../middleware/verifyToken");
 
 
-router.route('/').post(verifyAdminToken,createSong);
-// router.route('/:albumId').delete(verifyAdminToken,deleteAlbum).get(getAlbumById);
+router.route('/').post(verifyAdminToken,upload.single('songFile'),uploadSong);
+router.route('/:songId').delete(verifyAdminToken,deleteSong).patch(verifyAdminToken,uploadSongImage);
 
 
 module.exports=router;

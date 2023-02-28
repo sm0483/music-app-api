@@ -52,8 +52,7 @@ app.get('/api/v1/live',(req, res) => {
 
 const start=async()=>{
   try{
-      const connect= await connectDb(process.env.MONGO_URI);
-      console.log('connected...');
+      const connect=connectDb(process.env.MONGO_URI);
   }catch(err){
       console.log(err);
   }
