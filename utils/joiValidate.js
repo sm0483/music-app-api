@@ -79,12 +79,35 @@ const validateSong=(data)=>{
 
 }
 
+
+
+const playListValidation=(data)=>{
+   const schema=joi.object({
+    name:joi.string().min(2).required(),
+    songsId:joi.array().items(joi.string().hex().length(24)).required()
+   })
+
+   return schema.validate(data);
+
+}
+
+const playListUpdateValidate=(data)=>{
+  const schema=joi.object({
+    name:joi.string().min(2),
+    songsId:joi.array().items(joi.string().hex().length(24)).required()
+  })
+
+  return schema.validate(data);
+}
+
 module.exports = { 
   registerValidation, 
   loginValidation,updateUserValidation,
   updatePasswordValidation,
   validateObjectId,validateGenre,
   validateLanguage,validateAlbum,
-  validateSong
+  validateSong,playListValidation,
+  playListUpdateValidate
+  
 };
 

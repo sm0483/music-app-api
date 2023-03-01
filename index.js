@@ -23,6 +23,7 @@ const genreRoute=require("./routes/genreRoute");
 const languageRoute=require("./routes/languageRoute");
 const albumRoute=require("./routes/albumRoute");
 const songRoute=require("./routes/musicRoute");
+const playListRoute=require("./routes/playListRoute");
 
 
 //error handler
@@ -73,7 +74,8 @@ app.use("/api/v1/admin",adminRoute)
 app.use("/api/v1/genre",genreRoute);
 app.use("/api/v1/language",languageRoute);
 app.use("/api/v1/album",albumRoute);
-app.use("/api/v1/song",songRoute)
+app.use("/api/v1/song",songRoute);
+app.use("/api/v1/playlist",playListRoute);
 
 
 
