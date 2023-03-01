@@ -11,7 +11,7 @@ const {verifyAdminToken}=require("../middleware/verifyToken");
 
 
 router.route('/').post(verifyAdminToken,upload.single('songFile'),uploadSong);
-router.route('/:songId').delete(verifyAdminToken,deleteSong).patch(verifyAdminToken,uploadSongImage);
+router.route('/:songId').delete(verifyAdminToken,deleteSong).patch(verifyAdminToken,upload.single("songImage"),uploadSongImage);
 
 
 module.exports=router;

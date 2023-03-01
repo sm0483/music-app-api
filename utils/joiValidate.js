@@ -71,8 +71,8 @@ const validateSong=(data)=>{
   const schema=joi.object({
     songName:joi.string().min(2).required(),
     albumName:joi.string().hex().length(24).required(),
-    language:joi.string().hex().length(24).required(),
-    genres: joi.array().items(joi.string().hex().length(24).required()).required()
+    language:joi.string().min(2).required(),
+    genres: joi.array().items(joi.string().min(2)).required()
   })
 
   return schema.validate(data);
