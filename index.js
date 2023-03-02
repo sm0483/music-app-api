@@ -9,6 +9,7 @@ const xss=require('xss-clean');
 const helmet=require('helmet');
 const rateLimit=require('express-rate-limit')
 const morgan=require('morgan');
+const client=require('./config/redis');
 
 
 app.use(morgan('dev'));
@@ -48,7 +49,16 @@ app.get('/api/v1/live',(req, res) => {
   return res.status(200).json({ message: "alive" })
 })
 
+const connectRedis=async()=>{
+  try {
+    await client.connect();   
+    console.log("Redis connected"); 
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+connectRedis();
 
 
 const start=async()=>{
