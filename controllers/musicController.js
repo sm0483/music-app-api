@@ -55,12 +55,34 @@ const deleteSong=asyncWrapper(async(req,res,next)=>{
     res.status(StatusCodes.OK).json(song);
 })
 
+// get all song
 
+const getAllSong=asyncWrapper(async(req,res)=>{
+    const artistName=req.admin.id;
+    if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    let songs=await Song.find({artistName});
+    if(!songs) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
+    res.status(StatusCodes.OK).json(songs);
 
+})
+
+// get song by id
+
+const getSongById=asyncWrapper(async(req,res)=>{
+    const songId=req.params.songId;
+    if(!songId) throw new CustomError("Song id is required",StatusCodes.BAD_REQUEST);
+    const artistName=req.admin.id;
+    if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    const song=await Song.findOne({_id:songId,artistName});
+    if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
+    res.status(StatusCodes.OK).json(song);
+
+})
 
 module.exports={
     uploadSong,
     uploadSongImage,
     deleteSong,
-
+    getAllSong,
+    getSongById
 }
