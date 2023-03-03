@@ -61,7 +61,6 @@ const getAllSong=asyncWrapper(async(req,res)=>{
     const artistName=req.admin.id;
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     let songs=await Song.find({artistName});
-    if(!songs) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(songs);
 
 })
@@ -74,7 +73,6 @@ const getSongById=asyncWrapper(async(req,res)=>{
     const artistName=req.admin.id;
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     const song=await Song.findOne({_id:songId,artistName});
-    if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(song);
 
 })

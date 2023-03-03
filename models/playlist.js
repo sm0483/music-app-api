@@ -13,7 +13,7 @@ const playListSchema=new mongoose.Schema({
     },
     songsId:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Song"
+        ref:"Music"
     }]
 },{timestamps:true});
 

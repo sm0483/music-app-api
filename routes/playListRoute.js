@@ -3,14 +3,20 @@ const router=express.Router();
 const {
     createPlaylist,
     updatePlayList,
-    deletePlayList
+    deletePlayList,
+    getPlayLists,
+    getPlayList
 }=require("../controllers/playListController");
 
 const {verifyUserToken}=require("../middleware/verifyToken");
 
 
 
-router.route('/').post(verifyUserToken,createPlaylist);
-router.route('/:playListId').patch(verifyUserToken,updatePlayList).delete(verifyUserToken,deletePlayList);
+router.get('/',verifyUserToken,getPlayLists);
+router.get('/:playListId',verifyUserToken,getPlayList);
+router.post('/',verifyUserToken,createPlaylist);
+router.patch('/:playListId',verifyUserToken,updatePlayList);
+router.delete('/:playListId',verifyUserToken,deletePlayList);
+
 
 module.exports=router;

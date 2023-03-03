@@ -3,6 +3,9 @@ const Playlist = require('../models/playlist');
 const {playListValidation,playListUpdateValidate}=require('../utils/joiValidate');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require("../error/custom");
+const {redisGet,redisSet}=require('../utils/redis');
+const {listRedis,listsRedis}=require('../constants/redisPrefix');
+
 
 
 //create playList
@@ -30,8 +33,8 @@ const updatePlayList=asyncWrapper(async(req,res)=>{
         },
     };
     if(req.body.name) updateSongId.name=req.body.name;
-    const playList=await Playlist.findOneAndUpdate({_id:req.params.playListId},updateSongId,{runValidators:true,new:true})
-    if(playList) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST);
+    const playList=await Playlist.findOneAndUpdate({_id:playListId},updateSongId,{runValidators:true,new:true})
+    if(!playList) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST);
     res.status(StatusCodes.OK).json(playList);
 })
 
@@ -44,16 +47,50 @@ const deletePlayList=asyncWrapper(async(req,res)=>{
     if(!playListId) throw new CustomError("Invalid playList id",StatusCodes.BAD_REQUEST);   
     const userId=req.user.id;
     if(!userId) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
-    const song=await Playlist.findOneAndDelete({_id:playListId,userId:userId});
-    if(!song) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST);
-    res.status(StatusCodes.BAD_REQUEST).json(song);
+    const playlist=await Playlist.findOneAndDelete({_id:playListId,userId:userId});
+    if(!playlist) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST);
+    res.status(StatusCodes.BAD_REQUEST).json(playlist);
+})
+
+//get playlists
+
+const getPlayLists=asyncWrapper(async(req,res)=>{
+    const userId=req.user.id;
+    if(!userId) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
+    let playLists=await redisGet(userId,listsRedis);
+    if(!playLists) {
+        playLists=await Playlist.find({userId}).populate('songsId','songName songFile');
+        await redisSet(userId,listsRedis,playLists,120);
+        console.log('cache not present');
+    }
+    if(!playLists) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST)
+    res.status(StatusCodes.OK).json(playLists);
+})
+
+// get playlist
+
+const getPlayList=asyncWrapper(async(req,res)=>{
+    const playListId=req.params.playListId;
+    if(!playListId) throw new CustomError("Invalid playList id",StatusCodes.BAD_REQUEST);
+    const userId=req.user.id;
+    if(!userId) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
+    let playList=await redisGet(playListId,listRedis);
+    if(!playList) {
+        playList=await Playlist.findOne({_id:playListId,userId}).populate('songsId','songName songFile');
+        await redisSet(playListId,listRedis,playList,120);
+        console.log('cache not present');
+    }
+    if(!playList) throw new CustomError("playlist not present",StatusCodes.BAD_REQUEST);
+    res.status(StatusCodes.OK).json(playList);
 })
 
 
 module.exports = {
     createPlaylist,
     updatePlayList,
-    deletePlayList
+    deletePlayList,
+    getPlayLists,
+    getPlayList
 }
 
 
