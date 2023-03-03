@@ -2,6 +2,7 @@ module.exports=tokenType={
     listRedis:"playList",
     songRedis:"song",
     userRedis:"user",
-    listsRedis:"playLists"
+    listsRedis:"playLists",
+    songsRedis:"songs",
 }
 

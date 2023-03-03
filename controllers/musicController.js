@@ -6,6 +6,9 @@ const uploadImage = require('../utils/uploadImage');
 const uploadAudio=require('../utils/uploadSong');
 const Song=require("../models/music");
 const {getGenre,getLanguage}=require("../utils/getGenreLanguage");
+const {songsRedis,songRedis}=require("../constants/redisPrefix");
+const {redisGet,redisSet}=require('../utils/redis');
+
 
 
 //upload song
@@ -55,12 +58,18 @@ const deleteSong=asyncWrapper(async(req,res,next)=>{
     res.status(StatusCodes.OK).json(song);
 })
 
+
 // get all song
 
 const getAllSong=asyncWrapper(async(req,res)=>{
     const artistName=req.admin.id;
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
-    let songs=await Song.find({artistName});
+    let songs=await redisGet(artistName,songsRedis);
+    if(!songs) {
+        songs=await Song.find({artistName});
+        await redisSet(artistName,songsRedis,songs,120);
+        console.log('cache not present');
+    }
     res.status(StatusCodes.OK).json(songs);
 
 })
@@ -72,7 +81,12 @@ const getSongById=asyncWrapper(async(req,res)=>{
     if(!songId) throw new CustomError("Song id is required",StatusCodes.BAD_REQUEST);
     const artistName=req.admin.id;
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
-    const song=await Song.findOne({_id:songId,artistName});
+    let song=await redisGet(songId,songRedis);
+    if(!song){
+        song=await Song.findOne({_id:songId,artistName});
+        redisSet(songId,songRedis,song,120);
+        console.log('cache not present');
+    }
     res.status(StatusCodes.OK).json(song);
 
 })
