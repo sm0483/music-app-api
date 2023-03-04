@@ -26,6 +26,7 @@ const albumRoute=require("./routes/albumRoute");
 const songRoute=require("./routes/musicRoute");
 const playListRoute=require("./routes/playListRoute");
 const searchRoute=require("./routes/searchRoute");
+const multerError=require("./error/multerError");
 
 
 //error handler
@@ -89,6 +90,8 @@ app.use("/api/v1/songs",songRoute);
 app.use("/api/v1/playlists",playListRoute);
 app.use("/api/v1/search",searchRoute);
 
+
+app.use(multerError)
 
 
 

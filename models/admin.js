@@ -22,7 +22,7 @@ const artistSchema=new mongoose.Schema({
     },
     profilePic:{
         type:String,
-        default:"some url"
+        default:""
     },
     description:{
         type:String

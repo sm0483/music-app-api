@@ -12,11 +12,13 @@ const searchMusicByGenre=async(genreName)=>{
   try {
     const genre = await Genre.findOne({ genreName:new RegExp('^'+genreName,'i') });
     if (!genre) return null;
-    const song = await Song.find({ genres: { $in: [genre._id] } })
-    .populate({
-        path:'artistName songFile songImage',
-        select:'name'
-    });
+    const song = await Song.find({ genres: { $in: [genre._id] } }).populate({
+        path:'artistName',
+        select:"name -_id"
+    }).populate({
+        path:'albumName',
+        select:"albumName -_id"
+    }).exec();
     return song;
   } catch (err) {
     return null
@@ -28,12 +30,13 @@ const searchMusicByLanguage=async(languageName)=>{
     try {
         const language=await Language.findOne({languageName:new RegExp('^'+languageName,'i')});
         if(!language) return null;
-        const song=await Song.find({language:language._id})
-        .populate({
-            path:'artistName songFile songImage',
-            select:'name'
-        });
-
+        const song=await Song.find({language:language._id}).populate({
+            path:'artistName',
+            select:"name -_id"
+        }).populate({
+            path:'albumName',
+            select:"albumName -_id"
+        }).exec();
         return song;
     } catch (error) {
         return null;
@@ -47,6 +50,7 @@ const searchAlbum=async(albumName)=>{
     try {
         const album=await Album.find({albumName: new RegExp('^'+albumName,'i')});
         if(!album) return null;
+        return album;
     } catch (error) {
         return null;
     }
@@ -78,6 +82,12 @@ const getResult=asyncWrapper(async(req,res)=>{
     res.status(StatusCodes.OK).json(searchResult)
 
 })
+
+
+//search song by album id
+//search song by playlist id
+//search song by artist id
+// get 25 song links in an array
 
 module.exports={
     getResult
