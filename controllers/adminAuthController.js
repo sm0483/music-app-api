@@ -5,12 +5,13 @@ const CustomError = require("../error/custom");
 const { createJwt,tokenValid} = require("../utils/jwt");
 const { hashPassword } = require("../utils/bcrypt");
 const { registerValidation, loginValidation,
-     updateUserValidation,updatePasswordValidation} = require("../utils/joiValidate");
+     updatePasswordValidation,validateArtistUpdate} = require("../utils/joiValidate");
 const  sendEmail  = require("../utils/mailer");
 const tokenType=require("../constants/tokenType");
+const uploadImage=require('../utils/uploadImage');
 
 
-const createAdmin=asyncWrapper(async (req, res) =>{
+const createArtist=asyncWrapper(async (req, res) =>{
      const { error } = registerValidation(req.body);
      if (error) {
           throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
@@ -23,13 +24,15 @@ const createAdmin=asyncWrapper(async (req, res) =>{
     response = response.toObject(); 
     delete response.password;
     const verificationToken=createJwt({id:response._id},tokenType.verifyEmail);
-    const url=`${process.env.DOMAIN}/api/v1/admin/auth/verify/${verificationToken}`;
+    const url=`${process.env.DOMAIN}/api/v1/artist/auth/verify/${verificationToken}`;
     const mailStatus=await sendEmail(req.body.email,url);
 
     res.status(StatusCodes.CREATED).json(response);
 });
 
-const verifyAdmin=asyncWrapper(async (req, res) =>{
+
+
+const verifyArtist=asyncWrapper(async (req, res) =>{
      const token=req.params.token;
      if(!token) throw new CustomError("invalid email",StatusCodes.UNAUTHORIZED );
      const isValid=tokenValid(token,tokenType.verifyEmail);
@@ -45,22 +48,27 @@ const verifyAdmin=asyncWrapper(async (req, res) =>{
      });
 })
 
-const loginAdmin=asyncWrapper(async(req,res)=>{
+const loginArtist=asyncWrapper(async(req,res)=>{
      const {email,password}=req.body;
      const {error}=loginValidation(req.body);
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
      const admin = await Admin.findOne({ email });
      if(!admin) throw new CustomError("Email not found",StatusCodes.FORBIDDEN);
-     if(!admin.verified) throw new CustomError("Email not verified",StatusCodes.FORBIDDEN); 
      const isValid=await admin.comparePassword(password);
      if(!isValid) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     if(!admin.verified) {
+          const verificationToken=createJwt({id:admin._id},tokenType.verifyEmail);
+          const url=`${process.env.DOMAIN}/api/v1/artist/auth/verify/${verificationToken}`;
+          const mailStatus=await sendEmail(req.body.email,url);
+          return res.status(StatusCodes.OK).json({message:"Please verify your email"});
+     } 
      const id=admin._id.toString();
      const token=createJwt({id,type:tokenType.admin},tokenType.admin);
      res.status(StatusCodes.OK).json({token})
  })
 
 
- const getAdmin=asyncWrapper(async(req,res)=>{
+ const getArtist=asyncWrapper(async(req,res)=>{
     const {id}=req.admin;
     if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
     let response=await Admin.findById(id);
@@ -73,17 +81,27 @@ const loginAdmin=asyncWrapper(async(req,res)=>{
     res.status(StatusCodes.OK).json(response)
  })
  
- const updateAdmin=asyncWrapper(async(req,res)=>{
-    const{id}=req.admin;
-    if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
-    const {error}=updateUserValidation(req.body);
-    if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-    let updatedData=await Admin.findOneAndUpdate({_id:id},req.body,{runValidators:true,new:true});
-    updatedData = updatedData.toObject();
-    delete updatedData.password;
-    if(!updatedData) throw new CustomError("No admin found",StatusCodes.BAD_REQUEST);
-    res.status(StatusCodes.OK).json(updatedData)
- })
+
+
+ const updateArtist=asyncWrapper(async (req, res) =>{
+     const data=JSON.parse(req.body.data);
+     const { error } = validateArtistUpdate(data);
+     if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
+     const id=req.admin.id;
+     if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     const profilePic=await uploadImage(req.file.path);
+     console.log(profilePic);
+     req.body.profilePic=profilePic;
+     let updateArtist=await Admin.findOneAndUpdate({_id:id},req.body,{runValidators:true,new:true});
+     if(!updateArtist) throw new CustomError("No artist present",StatusCodes.NOT_FOUND);
+     updateArtist = updateArtist.toObject();
+     delete updateArtist.password;
+     delete updateArtist.createdAt;
+     delete updateArtist.updatedAt;
+     delete updateArtist.__v;
+     if(!updateArtist) throw new CustomError("No artist present",StatusCodes.BAD_REQUEST);
+     res.status(StatusCodes.OK).json(updateArtist)
+})
  
  const updatePassword=asyncWrapper(async(req,res)=>{
      const {id}=req.admin;
@@ -103,7 +121,7 @@ const loginAdmin=asyncWrapper(async(req,res)=>{
  })
  
  
- const logoutAdmin=asyncWrapper(async(req,res)=>{
+ const logoutArtist=asyncWrapper(async(req,res)=>{
      const accessToken="";
      res.status(StatusCodes.OK).json({accessToken,message:"Logged out"}); 
  })
@@ -113,9 +131,9 @@ const loginAdmin=asyncWrapper(async(req,res)=>{
 
 
 module.exports = { 
-     createAdmin,verifyAdmin,
-     getAdmin,loginAdmin,updateAdmin,
-     updatePassword,logoutAdmin
+     createArtist,verifyArtist,
+     getArtist,loginArtist,
+     updatePassword,logoutArtist,updateArtist
 };
 
 

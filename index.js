@@ -81,12 +81,12 @@ app.listen(port, () => console.log(`http://127.0.0.1:${port}`));
 
 
 app.use("/api/v1/user",userRoute)
-app.use("/api/v1/admin",adminRoute)
-app.use("/api/v1/genre",genreRoute);
-app.use("/api/v1/language",languageRoute);
-app.use("/api/v1/album",albumRoute);
-app.use("/api/v1/song",songRoute);
-app.use("/api/v1/playlist",playListRoute);
+app.use("/api/v1/artist",adminRoute)
+app.use("/api/v1/genres",genreRoute);
+app.use("/api/v1/languages",languageRoute);
+app.use("/api/v1/albums",albumRoute);
+app.use("/api/v1/songs",songRoute);
+app.use("/api/v1/playlists",playListRoute);
 app.use("/api/v1/search",searchRoute);
 
 

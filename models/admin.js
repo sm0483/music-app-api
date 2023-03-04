@@ -19,6 +19,13 @@ const artistSchema=new mongoose.Schema({
     verified:{
         type:Boolean,
         default:false
+    },
+    profilePic:{
+        type:String,
+        default:"some url"
+    },
+    description:{
+        type:String
     }
 },{timestamps:true});
 

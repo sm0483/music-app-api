@@ -24,6 +24,15 @@ const updateUserValidation=(data)=>{
   return schema.validate(data);
 }
 
+
+const validateArtistUpdate=(data)=>{
+  const schema=joi.object({
+    name: joi.string().min(4),
+    description:joi.string().min(10)
+  })
+  return schema.validate(data);
+}
+
 const updatePasswordValidation=(data)=>{
   const schema=joi.object({
     currentPassword: joi.string().min(6).required(),
@@ -40,6 +49,8 @@ const validateObjectId=(data)=>{
   })
   return schema.validate(data);
 }
+
+
 
 const validateGenre=(data)=>{
   const schema=joi.object({
@@ -107,7 +118,7 @@ module.exports = {
   validateObjectId,validateGenre,
   validateLanguage,validateAlbum,
   validateSong,playListValidation,
-  playListUpdateValidate
+  playListUpdateValidate,validateArtistUpdate
   
 };
 

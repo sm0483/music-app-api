@@ -51,9 +51,15 @@ const loginUser=asyncWrapper(async(req,res)=>{
      if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
      const user = await User.findOne({ email });
      if(!user) throw new CustomError("User not found",StatusCodes.FORBIDDEN);
-     if(!user.verified) throw new CustomError("Email not verified",StatusCodes.FORBIDDEN); 
      const isValid=await user.comparePassword(password);
      if(!isValid) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     if(!user.verified){
+          const verificationToken=createJwt({id:user._id},tokenType.verifyEmail);
+          const url=`${process.env.DOMAIN}/api/v1/user/auth/verify/${verificationToken}`;
+          const mailStatus=await sendEmail(req.body.email,url);
+          return res.status(StatusCodes.OK).json({message:"Please verify your email"})
+     }
+
      const id=user._id.toString();
      const token=createJwt({id,type:tokenType.user},tokenType.user);
      res.status(StatusCodes.OK).json({token})
