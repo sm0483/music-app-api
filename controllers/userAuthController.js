@@ -57,7 +57,7 @@ const loginUser=asyncWrapper(async(req,res)=>{
           const verificationToken=createJwt({id:user._id},tokenType.verifyEmail);
           const url=`${process.env.DOMAIN}/api/v1/user/auth/verify/${verificationToken}`;
           const mailStatus=await sendEmail(req.body.email,url);
-          return res.status(StatusCodes.OK).json({message:"Please verify your email"})
+          return res.status(StatusCodes.UNAUTHORIZED).json({message:"Please verify your email"})
      }
 
      const id=user._id.toString();

@@ -60,7 +60,7 @@ const loginArtist=asyncWrapper(async(req,res)=>{
           const verificationToken=createJwt({id:admin._id},tokenType.verifyEmail);
           const url=`${process.env.DOMAIN}/api/v1/artist/auth/verify/${verificationToken}`;
           const mailStatus=await sendEmail(req.body.email,url);
-          return res.status(StatusCodes.OK).json({message:"Please verify your email"});
+          return res.status(StatusCodes.UNAUTHORIZED).json({message:"Please verify your email"});
      } 
      const id=admin._id.toString();
      const token=createJwt({id,type:tokenType.admin},tokenType.admin);
