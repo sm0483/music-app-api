@@ -12,8 +12,11 @@ const {
 const {verifyAdminToken}=require("../middleware/verifyToken");
 
 
-router.route('/').post(verifyAdminToken,createLanguage).get(getAllLanguage);
-router.route('/:languageId').patch(verifyAdminToken,updateLanguage).delete(verifyAdminToken,deleteLanguage).get(getLanguage);
+router.post('/',verifyAdminToken,createLanguage);
+router.get('/',getAllLanguage);
+router.patch('/:languageId',verifyAdminToken,updateLanguage);
+router.delete('/:languageId',verifyAdminToken,deleteLanguage);
+router.get('/:languageId',getLanguage);
 
 
 module.exports=router;

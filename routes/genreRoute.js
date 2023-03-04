@@ -8,8 +8,11 @@ const {
 const {verifyAdminToken}=require("../middleware/verifyToken");
 
 
-router.route('/').post(verifyAdminToken,createGenre).get(getAllGenres);
-router.route('/:genreId').patch(verifyAdminToken,updateGenre).delete(verifyAdminToken,deleteGenre).get(getGenre);
+router.post('/',verifyAdminToken,createGenre);
+router.get('/',getAllGenres);
+router.patch('/:genreId',verifyAdminToken,updateGenre);
+router.delete('/:genreId',verifyAdminToken,deleteGenre);
+router.get('/:genreId',getGenre);
 
 
 module.exports=router;

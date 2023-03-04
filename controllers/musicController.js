@@ -39,7 +39,7 @@ const uploadSongImage=asyncWrapper(async(req,res,next)=>{
     const songId=req.params.songId;
     if(!songId) throw new CustomError("Song id is required",StatusCodes.BAD_REQUEST);
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
-    if(!req.file) throw new CustomError("Song file is required",StatusCodes.BAD_REQUEST);
+    if(!req.file) throw new CustomError("Song image is required",StatusCodes.BAD_REQUEST);
     const songImage=await uploadImage(req.file.path);
     const song=await Song.findOneAndUpdate({_id:songId,artistName:artistId},{songImage},{runValidators:true,new:true});
     if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
@@ -66,7 +66,10 @@ const getAllSong=asyncWrapper(async(req,res)=>{
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     let songs=await redisGet(artistName,songsRedis);
     if(!songs) {
-        songs=await Song.find({artistName});
+        songs=await Song.find({artistName}).populate({
+            path:'albumName genres language',
+            select:'albumName genreName languageName -_id'
+        });
         await redisSet(artistName,songsRedis,songs,120);
         console.log('cache not present');
     }
@@ -83,13 +86,18 @@ const getSongById=asyncWrapper(async(req,res)=>{
     if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     let song=await redisGet(songId,songRedis);
     if(!song){
-        song=await Song.findOne({_id:songId,artistName});
+        song=await Song.findOne({_id:songId,artistName}).populate({
+            path:'albumName genres language',
+            select:'albumName genreName languageName -_id'
+        });
         redisSet(songId,songRedis,song,120);
         console.log('cache not present');
     }
     res.status(StatusCodes.OK).json(song);
 
 })
+
+
 
 module.exports={
     uploadSong,
