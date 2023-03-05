@@ -34,7 +34,9 @@ const errorHandler = require("./error/err");
 const pageNotFound = require("./middleware/pageNotFound");
 const multerError=require("./error/multerError");
 
+//middleware
 const cors = require('cors');
+const setCache=require('./middleware/cache');
 
 app.use(xss());
 app.use(helmet());
@@ -46,6 +48,7 @@ app.use(rateLimit({
 }))
 app.use(express.json());
 app.use(express.static("./public"));
+app.use(setCache);
 
   
 
@@ -93,10 +96,8 @@ app.use("/api/v1/playlists",playListRoute);
 app.use("/api/v1/search",searchRoute);
 
 
+
 app.use(multerError)
-
-
-
 app.use(errorHandler);
 app.use(pageNotFound);
 

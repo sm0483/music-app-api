@@ -73,8 +73,8 @@ const getAllSong=asyncWrapper(async(req,res)=>{
     let songs=await redisGet(artistId,songsRedis);
     if(!songs) {
         songs=await Song.find({artistId}).populate({
-            path:'albumId genres language songImage',
-            select:'albumName genreName languageName -_id'
+            path:'albumId genres language songImage artistId',
+            select:'albumName genreName languageName name -_id'
         }).exec();
         await redisSet(artistId,songsRedis,songs,120);
         console.log('cache not present');
@@ -93,8 +93,8 @@ const getSongById=asyncWrapper(async(req,res)=>{
     let song=await redisGet(songId,songRedis);
     if(!song){
         song=await Song.findOne({_id:songId,artistId}).populate({
-            path:'albumId genres language songImage',
-            select:'albumName genreName languageName -_id'
+            path:'albumId genres language songImage artistId',
+            select:'albumName genreName languageName name -_id'
         }).exec();
         redisSet(songId,songRedis,song,120);
         console.log('cache not present');
