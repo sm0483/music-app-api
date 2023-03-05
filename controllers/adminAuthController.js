@@ -84,15 +84,17 @@ const loginArtist=asyncWrapper(async(req,res)=>{
 
 
  const updateArtist=asyncWrapper(async (req, res) =>{
+     if(!req.body.data) throw new CustomError('Invalid data',StatusCodes.BAD_REQUEST);
      const data=JSON.parse(req.body.data);
      const { error } = validateArtistUpdate(data);
      if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
      const id=req.admin.id;
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
+     if(!req.file) throw new CustomError("Please upload image",StatusCodes.BAD_REQUEST);
      const profilePic=await uploadImage(req.file.path);
      console.log(profilePic);
-     req.body.profilePic=profilePic;
-     let updateArtist=await Admin.findOneAndUpdate({_id:id},req.body,{runValidators:true,new:true});
+     data.profilePic=profilePic;
+     let updateArtist=await Admin.findOneAndUpdate({_id:id},data,{runValidators:true,new:true});
      if(!updateArtist) throw new CustomError("No artist present",StatusCodes.NOT_FOUND);
      updateArtist = updateArtist.toObject();
      delete updateArtist.password;

@@ -15,6 +15,7 @@ const {redisGet,redisSet}=require('../utils/redis');
 const uploadSong=asyncWrapper(async(req,res)=>{
     const artistId=req.admin.id;
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    if(!req.body.data) throw new CustomError("Song data is required",StatusCodes.BAD_REQUEST);
     const data=JSON.parse(req.body.data);
     const {error}=validateSong(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
@@ -52,6 +53,7 @@ const deleteSong=asyncWrapper(async(req,res,next)=>{
     const songId=req.params.songId;
     const {error}=validateObjectId({id:songId});
     const artistId=req.admin.id;
+    if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
     const song=await Song.findOne({_id:songId,artistName:artistId});
     if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);

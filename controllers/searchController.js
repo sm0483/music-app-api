@@ -11,6 +11,7 @@ const {
 
 const getResult=asyncWrapper(async(req,res)=>{
     const query=req.params.query;
+    if(!query) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
     const searchResponse=await Promise.all([
         searchMusicByGenre(query),
         searchMusicByLanguage(query),

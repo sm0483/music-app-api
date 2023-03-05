@@ -9,6 +9,7 @@ const Album=require("../models/album");
 const createAlbum=asyncWrapper(async(req,res)=>{
     const artistId=req.admin.id;
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    if(!req.body.data) throw new CustomError("Album data is required",StatusCodes.BAD_REQUEST);
     const data=JSON.parse(req.body.data);
     const {error}=validateAlbum(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
