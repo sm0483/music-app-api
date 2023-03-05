@@ -1,4 +1,6 @@
 const admin=require('../config/firebase');
+const CustomError = require("../error/custom");
+const {StatusCodes}=require("http-status-codes");
 
 
 
@@ -22,7 +24,7 @@ const uploadImage=async(file)=>{
         });
         return url[0];
     }catch(err){
-        return "";
+        throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
     }
 }
 

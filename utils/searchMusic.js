@@ -2,6 +2,8 @@ const Genre = require("../models/genre");
 const Song = require("../models/music");
 const Language = require("../models/language");
 const Album = require("../models/album");
+const CustomError = require("../error/custom");
+const { StatusCodes } = require("http-status-codes");
 
 // search genre
 const searchMusicByGenre = async (genreName) => {
@@ -22,7 +24,8 @@ const searchMusicByGenre = async (genreName) => {
       .exec();
     return song;
   } catch (err) {
-    return null;
+    throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
+
   }
 };
 
@@ -45,7 +48,7 @@ const searchMusicByLanguage = async (languageName) => {
       .exec();
     return song;
   } catch (error) {
-    return null;
+    throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
   }
 };
 
@@ -59,7 +62,8 @@ const searchAlbum = async (albumName) => {
     if (!album) return null;
     return album;
   } catch (error) {
-    return null;
+    throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
+
   }
 };
 
@@ -68,8 +72,8 @@ const searchMusicByName = async (songName) => {
     const song = await Song.find({ songName: new RegExp("^" + songName, "i") });
     return song;
   } catch (err) {
-    console.log(err);
-    return null;
+    throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
+
   }
 };
 

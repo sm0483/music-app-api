@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 const { google } = require('googleapis');
+const CustomError = require("../error/custom");
+const { StatusCodes } = require("http-status-codes");
 
 
 const sendMail=async(email,url)=>{
@@ -37,8 +39,8 @@ const sendMail=async(email,url)=>{
         return "email sent";
     
     }catch(err){
-        console.log(err);
-        return err;
+        throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
+
     }
 
 
