@@ -10,7 +10,6 @@ const { StatusCodes } = require("http-status-codes");
 const uploadImage = require("../utils/uploadImage");
 const Album = require("../models/album");
 const compressImage = require("../utils/compress");
-const Song = require("../models/music");
 
 //create album
 const createAlbum = asyncWrapper(async (req, res) => {
@@ -64,7 +63,7 @@ const getAllAlbums = asyncWrapper(async (req, res) => {
   const artistId = req.admin.id;
   if (!artistId)
     throw new CustomError("Token is not valid", StatusCodes.UNAUTHORIZED);
-  const albums = await Album.find({ artistName: artistId }).sort({
+  const albums = await Album.find({ artistId }).sort({
     createdAt: -1,
   });
   res.status(StatusCodes.OK).json(albums);
@@ -91,7 +90,7 @@ const updateAlbum = asyncWrapper(async (req, res) => {
     albumData.albumImage = url;
   }
   const album = await Album.findOneAndUpdate(
-    { artistName: artistId, _id: albumId },
+    { artistId, _id: albumId },
     albumData,
     { runValidators: true, new: true }
   );

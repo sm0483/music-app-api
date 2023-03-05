@@ -20,13 +20,14 @@ app.use(morgan('dev'));
 //routes
 
 const userRoute=require("./routes/userAuthRoute");
-const adminRoute=require("./routes/adminAuthRoute");
+const artistRoute=require("./routes/artistAuthRoute");
 const genreRoute=require("./routes/genreRoute");
 const languageRoute=require("./routes/languageRoute");
 const albumRoute=require("./routes/albumRoute");
 const songRoute=require("./routes/musicRoute");
 const playListRoute=require("./routes/playListRoute");
 const searchRoute=require("./routes/searchRoute");
+const serviceRoute=require("./routes/userServiceRoute");
 
 
 //error handler
@@ -87,13 +88,14 @@ app.listen(port, () => console.log(`http://127.0.0.1:${port}`));
 
 
 app.use("/api/v1/user",userRoute)
-app.use("/api/v1/artist",adminRoute)
+app.use("/api/v1/artist",artistRoute)
 app.use("/api/v1/genres",genreRoute);
 app.use("/api/v1/languages",languageRoute);
 app.use("/api/v1/albums",albumRoute);
 app.use("/api/v1/songs",songRoute);
 app.use("/api/v1/playlists",playListRoute);
 app.use("/api/v1/search",searchRoute);
+app.use("/api/v1/service",serviceRoute);
 
 
 
