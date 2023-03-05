@@ -6,6 +6,7 @@ const uploadImage=async(file)=>{
     try{
         if(!file) return "file not present";
         console.log(file);
+        file=file+".webp"
         const remoteFilePath = `image/${file}`;
         const bucket = admin.storage().bucket();
         const audioImage=await bucket.upload(file, {

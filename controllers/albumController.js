@@ -4,6 +4,8 @@ const CustomError = require("../error/custom");
 const {StatusCodes}=require("http-status-codes");
 const uploadImage = require('../utils/uploadImage');
 const Album=require("../models/album");
+const compressImage=require('../utils/compress');
+
 
 //create album
 const createAlbum=asyncWrapper(async(req,res)=>{
@@ -14,6 +16,7 @@ const createAlbum=asyncWrapper(async(req,res)=>{
     const {error}=validateAlbum(data);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
     if(!req.file) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
+    await compressImage(req);
     const url=await uploadImage(req.file.path);
     const albumData={...data,artistName:artistId,albumImage:url}
     const album=await Album.create(albumData);

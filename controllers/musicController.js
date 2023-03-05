@@ -8,6 +8,7 @@ const Song=require("../models/music");
 const {getGenre,getLanguage}=require("../utils/getGenreLanguage");
 const {songsRedis,songRedis}=require("../constants/redisPrefix");
 const {redisGet,redisSet}=require('../utils/redis');
+const compressImage=require('../utils/compress');
 
 
 
@@ -41,6 +42,7 @@ const uploadSongImage=asyncWrapper(async(req,res,next)=>{
     if(!songId) throw new CustomError("Song id is required",StatusCodes.BAD_REQUEST);
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     if(!req.file) throw new CustomError("Song image is required",StatusCodes.BAD_REQUEST);
+    await compressImage(req);
     const songImage=await uploadImage(req.file.path);
     const song=await Song.findOneAndUpdate({_id:songId,artistName:artistId},{songImage},{runValidators:true,new:true});
     if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);

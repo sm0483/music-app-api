@@ -9,6 +9,8 @@ const { registerValidation, loginValidation,
 const  sendEmail  = require("../utils/mailer");
 const tokenType=require("../constants/tokenType");
 const uploadImage=require('../utils/uploadImage');
+const compressImage=require('../utils/compress');
+
 
 
 const createArtist=asyncWrapper(async (req, res) =>{
@@ -91,6 +93,7 @@ const loginArtist=asyncWrapper(async(req,res)=>{
      const id=req.admin.id;
      if(!id) throw new CustomError("Invalid Credential",StatusCodes.FORBIDDEN);
      if(!req.file) throw new CustomError("Please upload image",StatusCodes.BAD_REQUEST);
+     await compressImage(req);
      const profilePic=await uploadImage(req.file.path);
      console.log(profilePic);
      data.profilePic=profilePic;
