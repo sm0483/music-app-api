@@ -119,6 +119,15 @@ const playListUpdateValidate=(data)=>{
   return schema.validate(data);
 }
 
+
+const playListRemoveValidate=(data)=>{
+  const schema=joi.object({
+    songsId:joi.array().items(joi.string().hex().length(24)).required()
+  })
+
+  return schema.validate(data);
+}
+
 module.exports = { 
   registerValidation, 
   loginValidation,updateUserValidation,
@@ -127,7 +136,7 @@ module.exports = {
   validateLanguage,validateAlbum,
   validateSong,playListValidation,
   playListUpdateValidate,validateArtistUpdate,
-  validateAlbumUpdate
+  validateAlbumUpdate,playListRemoveValidate
   
 };
 

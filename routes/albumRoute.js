@@ -5,7 +5,8 @@ const {
     deleteAlbum,
     getAlbumById,
     getAllAlbums,
-    updateAlbum
+    updateAlbum,
+    removeFromAlbum
 }=require("../controllers/albumController");
 
 const {verifyAdminToken}=require("../middleware/verifyToken");
@@ -17,6 +18,6 @@ router.get('/',verifyAdminToken,getAllAlbums);
 router.get('/:albumId',verifyAdminToken,getAlbumById);
 router.delete('/:albumId',verifyAdminToken,deleteAlbum);
 router.patch('/:albumId',verifyAdminToken,upload.single('albumImage'),updateAlbum);
-
+router.patch('/remove/:albumId',verifyAdminToken,removeFromAlbum);
 
 module.exports=router;

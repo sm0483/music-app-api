@@ -1,6 +1,6 @@
 const asyncWrapper = require('../error/asyncWrapper');
 const Playlist = require('../models/playlist');
-const {playListValidation,playListUpdateValidate}=require('../utils/joiValidate');
+const {playListValidation,playListUpdateValidate,playListRemoveValidate}=require('../utils/joiValidate');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require("../error/custom");
 const {redisGet,redisSet}=require('../utils/redis');
@@ -75,8 +75,16 @@ const getPlayList=asyncWrapper(async(req,res)=>{
     const userId=req.user.id;
     if(!userId) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
     let playList=await redisGet(playListId,listRedis);
+    playList=null;
     if(!playList) {
-        playList=await Playlist.findOne({_id:playListId,userId}).populate('songsId','songName songFile');
+        playList=await Playlist.findOne({_id:playListId,userId}).populate({
+            path:'songsId',
+            select:'songName songFile artistId',
+            populate:{
+                path:'artistId',
+                select:'name'
+            }
+        });
         await redisSet(playListId,listRedis,playList,120);
         console.log('cache not present');
     }
@@ -84,13 +92,32 @@ const getPlayList=asyncWrapper(async(req,res)=>{
     res.status(StatusCodes.OK).json(playList);
 })
 
+const removeFromPlayList = asyncWrapper(async (req, res) => {
+    const userId = req.user.id;
+    if (!userId) throw new CustomError("Invalid request", StatusCodes.BAD_REQUEST);
+    const playListId = req.params.playListId;
+    if (!playListId) throw new CustomError("Invalid playList id", StatusCodes.BAD_REQUEST);
+    const { error } = playListRemoveValidate(req.body);
+    if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
+    const updateSongId = {
+      $pull: {
+        songsId: { $in: req.body.songsId }
+      },
+    };
+    const playList = await Playlist.findOneAndUpdate({ _id: playListId,userId }, updateSongId, { runValidators: true, new: true })
+    if (!playList) throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
+    res.status(StatusCodes.OK).json(playList);
+  })
+  
+
 
 module.exports = {
     createPlaylist,
     updatePlayList,
     deletePlayList,
     getPlayLists,
-    getPlayList
+    getPlayList,
+    removeFromPlayList
 }
 
 

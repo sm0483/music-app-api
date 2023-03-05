@@ -5,7 +5,8 @@ const {
     updatePlayList,
     deletePlayList,
     getPlayLists,
-    getPlayList
+    getPlayList,
+    removeFromPlayList
 }=require("../controllers/playListController");
 
 const {verifyUserToken}=require("../middleware/verifyToken");
@@ -17,6 +18,7 @@ router.get('/:playListId',verifyUserToken,getPlayList);
 router.post('/',verifyUserToken,createPlaylist);
 router.patch('/:playListId',verifyUserToken,updatePlayList);
 router.delete('/:playListId',verifyUserToken,deletePlayList);
+router.patch('/remove/:playListId',verifyUserToken,removeFromPlayList);
 
 
 module.exports=router;
