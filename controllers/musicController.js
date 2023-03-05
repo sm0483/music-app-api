@@ -9,6 +9,7 @@ const {getGenre,getLanguage}=require("../utils/getGenreLanguage");
 const {songsRedis,songRedis}=require("../constants/redisPrefix");
 const {redisGet,redisSet}=require('../utils/redis');
 const compressImage=require('../utils/compress');
+const Album=require('../models/album');
 
 
 
@@ -26,12 +27,13 @@ const uploadSong=asyncWrapper(async(req,res)=>{
         getGenre(data.genres),
         getLanguage(data.language)
     ]);
-    const songData={...data,genres, artistName:artistId,songFile:url,language};
+    const songData={...data,genres,artistId,songFile:url,language};
     let song=await Song.create(songData);
     song=song.toObject();
     delete song.createdAt;
     delete song.updatedAt;
     delete song.__v;
+    await Album.findOneAndUpdate({_id:song.albumId,artistId},{$push:{songsId:song._id}},{runValidators:true,new:true});
     res.status(StatusCodes.OK).json(song);
 })
 
@@ -44,7 +46,7 @@ const uploadSongImage=asyncWrapper(async(req,res,next)=>{
     if(!req.file) throw new CustomError("Song image is required",StatusCodes.BAD_REQUEST);
     await compressImage(req);
     const songImage=await uploadImage(req.file.path);
-    const song=await Song.findOneAndUpdate({_id:songId,artistName:artistId},{songImage},{runValidators:true,new:true});
+    const song=await Song.findOneAndUpdate({_id:songId,artistId},{songImage},{runValidators:true,new:true});
     if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(song);
 })
@@ -57,7 +59,7 @@ const deleteSong=asyncWrapper(async(req,res,next)=>{
     const artistId=req.admin.id;
     if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-    const song=await Song.findOne({_id:songId,artistName:artistId});
+    const song=await Song.findOne({_id:songId,artistId});
     if(!song) throw new CustomError("Song not found",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(song);
 })
@@ -66,15 +68,15 @@ const deleteSong=asyncWrapper(async(req,res,next)=>{
 // get all song
 
 const getAllSong=asyncWrapper(async(req,res)=>{
-    const artistName=req.admin.id;
-    if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
-    let songs=await redisGet(artistName,songsRedis);
+    const artistId=req.admin.id;
+    if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    let songs=await redisGet(artistId,songsRedis);
     if(!songs) {
-        songs=await Song.find({artistName}).populate({
-            path:'albumName genres language',
+        songs=await Song.find({artistId}).populate({
+            path:'albumId genres language songImage',
             select:'albumName genreName languageName -_id'
-        });
-        await redisSet(artistName,songsRedis,songs,120);
+        }).exec();
+        await redisSet(artistId,songsRedis,songs,120);
         console.log('cache not present');
     }
     res.status(StatusCodes.OK).json(songs);
@@ -86,14 +88,14 @@ const getAllSong=asyncWrapper(async(req,res)=>{
 const getSongById=asyncWrapper(async(req,res)=>{
     const songId=req.params.songId;
     if(!songId) throw new CustomError("Song id is required",StatusCodes.BAD_REQUEST);
-    const artistName=req.admin.id;
-    if(!artistName) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    const artistId=req.admin.id;
+    if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
     let song=await redisGet(songId,songRedis);
     if(!song){
-        song=await Song.findOne({_id:songId,artistName}).populate({
-            path:'albumName genres language',
+        song=await Song.findOne({_id:songId,artistId}).populate({
+            path:'albumId genres language songImage',
             select:'albumName genreName languageName -_id'
-        });
+        }).exec();
         redisSet(songId,songRedis,song,120);
         console.log('cache not present');
     }

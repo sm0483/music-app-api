@@ -5,6 +5,7 @@ const {StatusCodes}=require("http-status-codes");
 const uploadImage = require('../utils/uploadImage');
 const Album=require("../models/album");
 const compressImage=require('../utils/compress');
+const Song=require('../models/music');
 
 
 //create album
@@ -18,7 +19,7 @@ const createAlbum=asyncWrapper(async(req,res)=>{
     if(!req.file) throw new CustomError("Album image is required",StatusCodes.BAD_REQUEST); 
     await compressImage(req);
     const url=await uploadImage(req.file.path);
-    const albumData={...data,artistName:artistId,albumImage:url}
+    const albumData={...data,artistId,albumImage:url}
     const album=await Album.create(albumData);
     res.status(StatusCodes.CREATED).json(album);
 })
@@ -38,17 +39,20 @@ const deleteAlbum=asyncWrapper(async(req,res)=>{
 
 const getAlbumById=asyncWrapper(async(req,res)=>{
     const {albumId}=req.params;
-    const {error}=validateObjectId({id:albumId});
-    if(error) throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-    const album=await Album.findById(albumId).populate('artistName','name');
-    if(!album) throw new CustomError("Album not found",StatusCodes.NOT_FOUND);
+    const artistId=req.admin.id;
+    if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    if(!albumId) throw new CustomError("Album id not present",StatusCodes.BAD_REQUEST);
+    const album=await Album.findOne({artistId,_id:albumId}).populate("songsId");
+    if(!album) throw new CustomError("album not present",StatusCodes.NOT_FOUND);
     res.status(StatusCodes.OK).json(album);
 })
 
 //get all albums
 
 const getAllAlbums=asyncWrapper(async(req,res)=>{
-    const albums=await Album.find();
+    const artistId=req.admin.id;
+    if(!artistId) throw new CustomError("Token is not valid",StatusCodes.UNAUTHORIZED);
+    const albums=await Album.find({artistName:artistId}).sort({createdAt:-1});
     res.status(StatusCodes.OK).json(albums);
 })
 

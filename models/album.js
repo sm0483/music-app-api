@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 
 
 const albumSchema=new mongoose.Schema({
-    artistName:{
+    artistId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Artist',
         required:true
@@ -18,7 +18,11 @@ const albumSchema=new mongoose.Schema({
     albumName:{
         type:String,
         required:true
-    }
+    },
+    songsId:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Music'
+    }]
     
 },{timestamps:true});
 

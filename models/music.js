@@ -6,18 +6,19 @@ const musicSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    artistName:{
+    artistId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Artist',
         required:true
     },
-    albumName:{
+    albumId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Album',
         default:"Unknown"
     },
     songImage:{
         type:String,
+        default:''
     },
     songFile:{
         type:String,

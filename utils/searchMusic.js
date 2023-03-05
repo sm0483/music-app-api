@@ -12,11 +12,11 @@ const searchMusicByGenre = async (genreName) => {
     if (!genre) return null;
     const song = await Song.find({ genres: { $in: [genre._id] } })
       .populate({
-        path: "artistName",
+        path: "artistId",
         select: "name -_id",
       })
       .populate({
-        path: "albumName",
+        path: "albumId",
         select: "albumName -_id",
       })
       .exec();
@@ -35,11 +35,11 @@ const searchMusicByLanguage = async (languageName) => {
     if (!language) return null;
     const song = await Song.find({ language: language._id })
       .populate({
-        path: "artistName",
+        path: "artistId",
         select: "name -_id",
       })
       .populate({
-        path: "albumName",
+        path: "albumId",
         select: "albumName -_id",
       })
       .exec();
