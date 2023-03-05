@@ -12,6 +12,7 @@ const morgan=require('morgan');
 const client=require('./config/redis');
 
 
+
 app.use(morgan('dev'));
 
 
@@ -26,12 +27,13 @@ const albumRoute=require("./routes/albumRoute");
 const songRoute=require("./routes/musicRoute");
 const playListRoute=require("./routes/playListRoute");
 const searchRoute=require("./routes/searchRoute");
-const multerError=require("./error/multerError");
 
 
 //error handler
-const errorHandler = require("./middleware/err");
+const errorHandler = require("./error/err");
 const pageNotFound = require("./middleware/pageNotFound");
+const multerError=require("./error/multerError");
+
 const cors = require('cors');
 
 app.use(xss());
