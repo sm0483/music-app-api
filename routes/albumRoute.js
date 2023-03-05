@@ -4,15 +4,19 @@ const {
     createAlbum,
     deleteAlbum,
     getAlbumById,
-    getAllAlbums
+    getAllAlbums,
+    updateAlbum
 }=require("../controllers/albumController");
 
 const {verifyAdminToken}=require("../middleware/verifyToken");
 const upload=require("../utils/multer");
 
 
-router.route('/').post(verifyAdminToken,upload.single('albumImage'),createAlbum).get(getAllAlbums);
-router.route('/:albumId').delete(verifyAdminToken,deleteAlbum).get(getAlbumById);
+router.post('/',verifyAdminToken,upload.single('albumImage'),createAlbum);
+router.get('/',getAllAlbums);
+router.get('/:albumId',getAlbumById);
+router.delete('/:albumId',verifyAdminToken,deleteAlbum);
+router.patch('/:albumId',verifyAdminToken,upload.single('albumImage'),updateAlbum);
 
 
 module.exports=router;

@@ -21,8 +21,7 @@ const uploadImage=async(file)=>{
         });
         return url[0];
     }catch(err){
-        console.log(err);
-        return err;
+        return "";
     }
 }
 

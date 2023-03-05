@@ -77,6 +77,14 @@ const validateAlbum=(data)=>{
   return schema.validate(data);
 }
 
+const validateAlbumUpdate=(data)=>{
+  const schema=joi.object({
+    albumName:joi.string().min(2)
+  })
+
+  return schema.validate(data);
+}
+
 
 const validateSong=(data)=>{
   const schema=joi.object({
@@ -118,7 +126,8 @@ module.exports = {
   validateObjectId,validateGenre,
   validateLanguage,validateAlbum,
   validateSong,playListValidation,
-  playListUpdateValidate,validateArtistUpdate
+  playListUpdateValidate,validateArtistUpdate,
+  validateAlbumUpdate
   
 };
 
