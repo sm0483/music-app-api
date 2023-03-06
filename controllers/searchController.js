@@ -12,16 +12,19 @@ const {
 const getResult=asyncWrapper(async(req,res)=>{
     const query=req.params.query;
     if(!query) throw new CustomError("Invalid request",StatusCodes.BAD_REQUEST);
-    const searchResponse=await Promise.all([
+    const [musicByGenre,musicByLanguage,musicByName,albums]=await Promise.all([
         searchMusicByGenre(query),
         searchMusicByLanguage(query),
         searchMusicByName(query),
         searchAlbum(query),
     ])
 
-    const searchResult=searchResponse.filter((result)=>{
-        if((result!==null || result!==undefined) && (result && result.length!==0))return result;
-    })
+    const searchResult={
+        musicByGenre,
+        musicByLanguage,
+        musicByName,
+        albums
+    }
 
     res.status(StatusCodes.OK).json(searchResult)
 

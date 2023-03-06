@@ -8,10 +8,11 @@ const { StatusCodes } = require("http-status-codes");
 // search genre
 const searchMusicByGenre = async (genreName) => {
   try {
+    let searchResponse=[];
     const genre = await Genre.findOne({
       genreName: new RegExp("^" + genreName, "i"),
     });
-    if (!genre) return null;
+    if (!genre) return searchResponse;
     const song = await Song.find({ genres: { $in: [genre._id] } })
       .populate({
         path: "artistId",
@@ -22,7 +23,8 @@ const searchMusicByGenre = async (genreName) => {
         select: "albumName -_id",
       })
       .exec();
-    return song;
+      searchResponse=song;
+    return searchResponse;
   } catch (err) {
     throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
 
@@ -32,10 +34,11 @@ const searchMusicByGenre = async (genreName) => {
 // search by language
 const searchMusicByLanguage = async (languageName) => {
   try {
+    let searchResponse=[];
     const language = await Language.findOne({
       languageName: new RegExp("^" + languageName, "i"),
     });
-    if (!language) return null;
+    if (!language) return searchResponse;
     const song = await Song.find({ language: language._id })
       .populate({
         path: "artistId",
@@ -46,7 +49,8 @@ const searchMusicByLanguage = async (languageName) => {
         select: "albumName -_id",
       })
       .exec();
-    return song;
+    searchResponse=song;
+    return searchResponse;
   } catch (error) {
     throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
   }
@@ -56,11 +60,13 @@ const searchMusicByLanguage = async (languageName) => {
 
 const searchAlbum = async (albumName) => {
   try {
+    let searchResponse=[];
     const album = await Album.find({
       albumName: new RegExp("^" + albumName, "i"),
     });
-    if (!album) return null;
-    return album;
+    if (!album) return searchResponse;
+    searchResponse=album;
+    return searchResponse;
   } catch (error) {
     throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
 
@@ -69,11 +75,12 @@ const searchAlbum = async (albumName) => {
 
 const searchMusicByName = async (songName) => {
   try {
+    let searchResponse=[];
     const song = await Song.find({ songName: new RegExp("^" + songName, "i") });
-    return song;
+    searchResponse=song;
+    return searchResponse;
   } catch (err) {
     throw new CustomError(error.message,StatusCodes.BAD_REQUEST);
-
   }
 };
 
