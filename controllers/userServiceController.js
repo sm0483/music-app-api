@@ -104,6 +104,21 @@ const removeLikeAlbum = asyncWrapper(async (req, res) => {
 });
 
 
+const getAlbum = asyncWrapper(async (req, res) => {
+  const albumId=req.params.albumId;
+  if(!albumId) throw new CustomError("Album id is required", StatusCodes.BAD_REQUEST);
+  const album=await Album.findById(albumId).populate("songsId");
+  if(!album) throw new CustomError("Album not found", StatusCodes.NOT_FOUND);
+  res.status(StatusCodes.OK).json(album);
+})
+
+
+
+const getAlbums = asyncWrapper(async (req, res) => {
+  const albums=await Album.find({});
+  if(!albums) throw new CustomError("Album not found", StatusCodes.NOT_FOUND);
+  res.status(StatusCodes.OK).json(albums);
+})
 
 
 module.exports = {
@@ -111,5 +126,7 @@ module.exports = {
   handleLikeSong,
   removeLikeSong,
   handleLikeAlbum,
-  removeLikeAlbum
+  removeLikeAlbum,
+  getAlbum,
+  getAlbums
 };

@@ -9,7 +9,6 @@ const xss=require('xss-clean');
 const helmet=require('helmet');
 const rateLimit=require('express-rate-limit')
 const morgan=require('morgan');
-const client=require('./config/redis');
 
 
 
@@ -37,7 +36,6 @@ const multerError=require("./error/multerError");
 
 //middleware
 const cors = require('cors');
-const setCache=require('./middleware/cache');
 
 app.use(xss());
 app.use(helmet());
@@ -49,24 +47,12 @@ app.use(rateLimit({
 }))
 app.use(express.json());
 app.use(express.static("./public"));
-app.use(setCache);
 
   
 
 app.get('/api/v1/live',(req, res) => {
   return res.status(200).json({ message: "alive" })
 })
-
-const connectRedis=async()=>{
-  try {
-    await client.connect();   
-    console.log("Redis connected"); 
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-connectRedis();
 
 
 const start=async()=>{
