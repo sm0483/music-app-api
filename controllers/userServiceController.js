@@ -10,7 +10,10 @@ const Album=require("../models/album");
 const getSong = asyncWrapper(async (req, res) => {
   const { error } = queryValidate(req.query);
   if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
-  const songs = await Song.find({}).limit(req.query.count);
+  const songs = await Song.find({}).limit(req.query.count).populate({
+    path:"artistId",
+    select:"name"
+  });
   if (songs === null)
     throw new CustomError("No songs found", StatusCodes.NOT_FOUND);
   res.status(StatusCodes.OK).json(songs);
