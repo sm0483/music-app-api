@@ -16,7 +16,8 @@ const getSong = asyncWrapper(async (req, res) => {
   });
   if (songs === null)
     throw new CustomError("No songs found", StatusCodes.NOT_FOUND);
-  res.status(StatusCodes.OK).json(songs);
+  const sortedSongs = songs.sort(()=>Math.random() - 0.5);
+  res.status(StatusCodes.OK).json(sortedSongs);
 });
 
 // like song
