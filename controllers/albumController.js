@@ -86,6 +86,7 @@ const updateAlbum = asyncWrapper(async (req, res) => {
     albumData = { ...data };
   }
   if (req.file) {
+    await compressImage(req)
     const url = await uploadImage(req.file.path);
     albumData.albumImage = url;
   }
@@ -94,6 +95,7 @@ const updateAlbum = asyncWrapper(async (req, res) => {
     albumData,
     { runValidators: true, new: true }
   );
+  if(!album) throw new CustomError("Album not preset",StatusCodes.NOT_FOUND);
   res.status(StatusCodes.CREATED).json(album);
 });
 

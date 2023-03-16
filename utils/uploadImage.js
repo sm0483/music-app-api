@@ -1,13 +1,14 @@
 const admin=require('../config/firebase');
 const CustomError = require("../error/custom");
 const {StatusCodes}=require("http-status-codes");
+const fs=require('fs')
 
 
 
 const uploadImage=async(file)=>{
     try{
         if(!file) return "file not present";
-        console.log(file);
+        const uncompressed=file;
         file=file+".webp"
         const remoteFilePath = `image/${file}`;
         const bucket = admin.storage().bucket();
@@ -22,6 +23,8 @@ const uploadImage=async(file)=>{
           action: 'read',
           expires: '03-01-2500' 
         });
+        fs.unlinkSync(file);
+        fs.unlinkSync(uncompressed);
         return url[0];
     }catch(err){
         throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
