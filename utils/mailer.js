@@ -1,55 +1,47 @@
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const CustomError = require("../error/custom");
-const { StatusCodes } = require("http-status-codes");
+const CustomError = require('../error/custom');
+const { StatusCodes } = require('http-status-codes');
 
+const sendMail = async (email, url) => {
+  try {
+    const oAuth2Client = new google.auth.OAuth2(
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
+      process.env.REDIRECT_URI
+    );
 
-const sendMail=async(email,url)=>{
-    try{
-        const oAuth2Client = new google.auth.OAuth2(
-            process.env.CLIENT_ID,
-            process.env.CLIENT_SECRET,
-            process.env.REDIRECT_URI
-        );
+    oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 
-        oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
-          
-        const accessToken = await oAuth2Client.getAccessToken();
+    const accessToken = await oAuth2Client.getAccessToken();
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-            type: 'OAuth2',
-                user: process.env.EMAIL,
-                clientId: process.env.CLIENT_ID,
-                clientSecret: process.env.CLIENT_SECRET,
-                refreshToken: process.env.REFRESH_TOKEN,
-                accessToken: accessToken,
-            },
-        });
-    
-        const mailOptions={
-            from:"bahubali",
-            to:email,
-            subject: 'verify email',
-            text: url,
-        };
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.EMAIL,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
 
-        const result = await transporter.sendMail(mailOptions);
-        return "email sent";
-    
-    }catch(err){
-        throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
+    const mailOptions = {
+      from: 'bahubali',
+      to: email,
+      subject: 'verify email',
+      text: url,
+    };
 
-    }
+    const result = await transporter.sendMail(mailOptions);
+    return 'email sent';
+  } catch (err) {
+    throw new CustomError(err.message, StatusCodes.BAD_REQUEST);
+  }
+};
 
-
-}
-
-module.exports=sendMail;
-
-
-
+module.exports = sendMail;
 
 // const nodemailer = require("nodemailer");
 // const { google } = require('googleapis');

@@ -6,8 +6,8 @@ const Song = require('../models/music');
 const Like = require('../models/like');
 const Album = require('../models/album');
 const { default: mongoose } = require('mongoose');
-const {getSongPipeline,getAlbumPipeline} = require('../pipelines/song');
-const {getAlbumPipelineAlbum}=require('../pipelines/album');
+const { getSongPipeline, getAlbumPipeline } = require('../pipelines/song');
+const { getAlbumPipelineAlbum } = require('../pipelines/album');
 
 // get song by query
 const getSong = asyncWrapper(async (req, res) => {
@@ -19,7 +19,7 @@ const getSong = asyncWrapper(async (req, res) => {
   const size = parseInt(req.query.count);
   let likedSong = await Like.findOne({ userId });
   if (likedSong == null) likedSong = { songIds: [], albumIds: [] };
-  const songPipeline=getSongPipeline(size,likedSong);
+  const songPipeline = getSongPipeline(size, likedSong);
   let songs = await Song.aggregate(songPipeline);
   if (songs === null)
     throw new CustomError('No songs found', StatusCodes.NOT_FOUND);
@@ -151,17 +151,18 @@ const getAlbum = asyncWrapper(async (req, res) => {
   if (!album) throw new CustomError('Album not found', StatusCodes.NOT_FOUND);
   let likedSong = await Like.findOne({ userId });
   if (!likedSong) likedSong = { songIds: [] };
-  const albumPipeline=getAlbumPipeline(albumId,likedSong)
+  const albumPipeline = getAlbumPipeline(albumId, likedSong);
   const songs = await Song.aggregate(albumPipeline);
   res.status(StatusCodes.OK).json(songs);
 });
 
 const getAlbums = asyncWrapper(async (req, res) => {
-  const userId=req.user.id;
-  if(!userId) throw new CustomError('Token not valid', StatusCodes.UNAUTHORIZED);
-  let likedAlbum=await Like.findOne({userId})
-  if(!likedAlbum) likedAlbum={albumIds:[]}
-  const albumPipeline=getAlbumPipelineAlbum(likedAlbum)
+  const userId = req.user.id;
+  if (!userId)
+    throw new CustomError('Token not valid', StatusCodes.UNAUTHORIZED);
+  let likedAlbum = await Like.findOne({ userId });
+  if (!likedAlbum) likedAlbum = { albumIds: [] };
+  const albumPipeline = getAlbumPipelineAlbum(likedAlbum);
   const albums = await Album.aggregate(albumPipeline);
   if (!albums) throw new CustomError('Album not found', StatusCodes.NOT_FOUND);
   res.status(StatusCodes.OK).json(albums);

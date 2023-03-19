@@ -1,8 +1,7 @@
-function asyncWrapper(fn){
-    return function(req,res,next){
-        fn(req,res,next).catch(err=>next(err));
-    }
+function asyncWrapper(fn) {
+  return function (req, res, next) {
+    fn(req, res, next).catch((err) => next(err));
+  };
 }
 
-
-module.exports=asyncWrapper;
+module.exports = asyncWrapper;

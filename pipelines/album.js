@@ -18,5 +18,5 @@ const getAlbumPipelineAlbum = (likedAlbum) => {
 };
 
 module.exports = {
-    getAlbumPipelineAlbum,
-}
+  getAlbumPipelineAlbum,
+};

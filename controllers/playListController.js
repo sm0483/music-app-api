@@ -9,7 +9,7 @@ const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../error/custom');
 const Song = require('../models/music');
 const Like = require('../models/like');
-const {getPlayListPipeline} = require('../pipelines/playlist');
+const { getPlayListPipeline } = require('../pipelines/playlist');
 //create playList
 const createPlaylist = asyncWrapper(async (req, res) => {
   const { error } = playListValidation(req.body);
@@ -85,7 +85,7 @@ const getPlayList = asyncWrapper(async (req, res) => {
     throw new CustomError('Invalid request', StatusCodes.BAD_REQUEST);
   let likedSong = await Like.findOne({ userId });
   if (!likedSong) likedSong = { songIds: [] };
-  const playListPipeline=getPlayListPipeline(likedSong,playListId);
+  const playListPipeline = getPlayListPipeline(likedSong, playListId);
   const playList = await Playlist.aggregate(playListPipeline);
   if (!playList)
     throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);

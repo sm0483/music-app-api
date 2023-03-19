@@ -1,6 +1,6 @@
 const { default: mongoose } = require('mongoose');
 
-const getPlayListPipeline = (likedSong,playListId) => {
+const getPlayListPipeline = (likedSong, playListId) => {
   return [
     {
       $match: { _id: mongoose.Types.ObjectId(playListId) },
