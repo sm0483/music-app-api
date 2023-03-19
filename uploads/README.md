@@ -1,1 +1,1 @@
-# For storing image and song file temporarily
+# Used by multer for file upload

@@ -1,6 +1,7 @@
 const admin=require('../config/firebase');
 const CustomError = require("../error/custom");
 const {StatusCodes}=require("http-status-codes");
+const fs=require('fs');
 
 const uploadAudio=async(file)=>{
     try{
@@ -18,6 +19,7 @@ const uploadAudio=async(file)=>{
           action: 'read',
           expires: '03-01-2500' 
         });
+        fs.unlinkSync(file);
         return url[0];
     }catch(err){
         throw new CustomError(err.message,StatusCodes.BAD_REQUEST);
