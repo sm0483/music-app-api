@@ -1,13 +1,15 @@
-const asyncWrapper = require("../error/asyncWrapper");
-const Playlist = require("../models/playlist");
+const asyncWrapper = require('../error/asyncWrapper');
+const Playlist = require('../models/playlist');
 const {
   playListValidation,
   playListUpdateValidate,
   playListRemoveValidate,
-} = require("../utils/joiValidate");
-const { StatusCodes } = require("http-status-codes");
-const CustomError = require("../error/custom");
-
+} = require('../utils/joiValidate');
+const { StatusCodes } = require('http-status-codes');
+const CustomError = require('../error/custom');
+const Song = require('../models/music');
+const Like = require('../models/like');
+const {getPlayListPipeline} = require('../pipelines/playlist');
 //create playList
 const createPlaylist = asyncWrapper(async (req, res) => {
   const { error } = playListValidation(req.body);
@@ -23,7 +25,7 @@ const createPlaylist = asyncWrapper(async (req, res) => {
 const updatePlayList = asyncWrapper(async (req, res) => {
   const playListId = req.params.playListId;
   if (!playListId)
-    throw new CustomError("Invalid playList id", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid playList id', StatusCodes.BAD_REQUEST);
   const { error } = playListUpdateValidate(req.body);
   if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
   const updateSongId = {
@@ -38,7 +40,7 @@ const updatePlayList = asyncWrapper(async (req, res) => {
     { runValidators: true, new: true }
   );
   if (!playList)
-    throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
+    throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);
   res.status(StatusCodes.OK).json(playList);
 });
 
@@ -47,17 +49,17 @@ const updatePlayList = asyncWrapper(async (req, res) => {
 const deletePlayList = asyncWrapper(async (req, res) => {
   const playListId = req.params.playListId;
   if (!playListId)
-    throw new CustomError("Invalid playList id", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid playList id', StatusCodes.BAD_REQUEST);
   const userId = req.user.id;
   if (!userId)
-    throw new CustomError("Invalid request", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid request', StatusCodes.BAD_REQUEST);
   const playlist = await Playlist.findOneAndDelete({
     _id: playListId,
     userId: userId,
   });
   if (!playlist)
-    throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
-  res.status(StatusCodes.BAD_REQUEST).json(playlist);
+    throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);
+  res.status(StatusCodes.OK).json(playlist);
 });
 
 //get playlists
@@ -65,13 +67,10 @@ const deletePlayList = asyncWrapper(async (req, res) => {
 const getPlayLists = asyncWrapper(async (req, res) => {
   const userId = req.user.id;
   if (!userId)
-    throw new CustomError("Invalid request", StatusCodes.BAD_REQUEST);
-  const playLists = await Playlist.find({ userId }).populate(
-    "songsId",
-    "songName songFile"
-  );
+    throw new CustomError('Invalid request', StatusCodes.BAD_REQUEST);
+  const playLists = await Playlist.find({ userId }, { songsId: 0 });
   if (!playLists)
-    throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
+    throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);
   res.status(StatusCodes.OK).json(playLists);
 });
 
@@ -80,33 +79,26 @@ const getPlayLists = asyncWrapper(async (req, res) => {
 const getPlayList = asyncWrapper(async (req, res) => {
   const playListId = req.params.playListId;
   if (!playListId)
-    throw new CustomError("Invalid playList id", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid playList id', StatusCodes.BAD_REQUEST);
   const userId = req.user.id;
   if (!userId)
-    throw new CustomError("Invalid request", StatusCodes.BAD_REQUEST);
-  const playList = await Playlist.findOne({ _id: playListId, userId }).populate(
-    {
-      path: "songsId",
-      select: "songName songFile artistId",
-      populate: {
-        path: "artistId",
-        select: "name",
-      },
-    }
-  );
-
+    throw new CustomError('Invalid request', StatusCodes.BAD_REQUEST);
+  let likedSong = await Like.findOne({ userId });
+  if (!likedSong) likedSong = { songIds: [] };
+  const playListPipeline=getPlayListPipeline(likedSong,playListId);
+  const playList = await Playlist.aggregate(playListPipeline);
   if (!playList)
-    throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
+    throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);
   res.status(StatusCodes.OK).json(playList);
 });
 
 const removeFromPlayList = asyncWrapper(async (req, res) => {
   const userId = req.user.id;
   if (!userId)
-    throw new CustomError("Invalid request", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid request', StatusCodes.BAD_REQUEST);
   const playListId = req.params.playListId;
   if (!playListId)
-    throw new CustomError("Invalid playList id", StatusCodes.BAD_REQUEST);
+    throw new CustomError('Invalid playList id', StatusCodes.BAD_REQUEST);
   const { error } = playListRemoveValidate(req.body);
   if (error) throw new CustomError(error.message, StatusCodes.BAD_REQUEST);
   const updateSongId = {
@@ -120,7 +112,7 @@ const removeFromPlayList = asyncWrapper(async (req, res) => {
     { runValidators: true, new: true }
   );
   if (!playList)
-    throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
+    throw new CustomError('playlist not present', StatusCodes.BAD_REQUEST);
   res.status(StatusCodes.OK).json(playList);
 });
 

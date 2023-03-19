@@ -131,3 +131,5 @@ dist
 .pnp.*
 serviceKey.json
 scripts
+config/redis.js
+utils/redis.js
