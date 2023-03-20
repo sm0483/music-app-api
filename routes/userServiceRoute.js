@@ -8,6 +8,7 @@ const {
   removeLikeAlbum,
   getAlbums,
   getAlbum,
+  getLikedSongs
 } = require('../controllers/userServiceController');
 const { verifyUserToken } = require('../middleware/verifyToken');
 const setCache = require('../middleware/cache');
@@ -19,5 +20,6 @@ router.post('/albums/like/:albumId', verifyUserToken, handleLikeAlbum);
 router.post('/albums/remove-like/:albumId', verifyUserToken, removeLikeAlbum);
 router.get('/albums', verifyUserToken, getAlbums);
 router.get('/albums/:albumId', verifyUserToken, setCache, getAlbum);
+router.get('/liked',verifyUserToken,getLikedSongs)
 
 module.exports = router;
