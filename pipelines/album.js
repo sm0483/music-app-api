@@ -1,5 +1,6 @@
-const getAlbumPipelineAlbum = (likedAlbum) => {
+const getAlbumPipelineAlbum = (likedAlbum,size) => {
   return [
+    { $sample: { size } },
     {
       $project: {
         _id: 1,

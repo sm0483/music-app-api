@@ -158,11 +158,14 @@ const getAlbum = asyncWrapper(async (req, res) => {
 
 const getAlbums = asyncWrapper(async (req, res) => {
   const userId = req.user.id;
+  let count=req.query.count;
+  if(!count) throw new CustomError("Count should be present",StatusCodes.BAD_REQUEST)
+  count=parseInt(count)
   if (!userId)
     throw new CustomError('Token not valid', StatusCodes.UNAUTHORIZED);
   let likedAlbum = await Like.findOne({ userId });
   if (!likedAlbum) likedAlbum = { albumIds: [] };
-  const albumPipeline = getAlbumPipelineAlbum(likedAlbum);
+  const albumPipeline = getAlbumPipelineAlbum(likedAlbum,count);
   const albums = await Album.aggregate(albumPipeline);
   if (!albums) throw new CustomError('Album not found', StatusCodes.NOT_FOUND);
   res.status(StatusCodes.OK).json(albums);
