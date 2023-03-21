@@ -5,9 +5,9 @@ const { queryValidate } = require("../utils/joiValidate");
 const Song = require("../models/music");
 const Like = require("../models/like");
 const Album = require("../models/album");
-const { default: mongoose } = require("mongoose");
 const { getSongPipeline, getAlbumPipeline } = require("../pipelines/song");
 const { getAlbumPipelineAlbum } = require("../pipelines/album");
+const { setCache, getCache } = require("../utils/redis");
 
 // get song by query
 const getSong = asyncWrapper(async (req, res) => {
@@ -19,8 +19,11 @@ const getSong = asyncWrapper(async (req, res) => {
    const size = parseInt(req.query.count);
    let likedSong = await Like.findOne({ userId });
    if (likedSong == null) likedSong = { songIds: [], albumIds: [] };
-   const songPipeline = getSongPipeline(size, likedSong);
+   let removeSong = await getCache(userId);
+   if (removeSong === null) removeSong = [];
+   const songPipeline = getSongPipeline(size, likedSong, removeSong);
    let songs = await Song.aggregate(songPipeline);
+   await setCache(userId, songs, size);
    if (songs === null)
       throw new CustomError("No songs found", StatusCodes.NOT_FOUND);
    res.status(StatusCodes.OK).json(songs);

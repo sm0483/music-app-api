@@ -7,6 +7,6 @@
     "node": true
   },
   "rules": {
-    "no-console": "error"
+    "no-console": ["error", { "allow": ["error", "warn"] }]
   }
 }
