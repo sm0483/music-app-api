@@ -18,7 +18,7 @@ const songsWithArtistNames = async (playList) => {
    const artistNames = await getArtistNames(songs);
    return songs.map((song) => ({
       ...song,
-      artistName: artistNames[song.artistId],
+      artist: [{ name: artistNames[song.artistId] }],
    }));
 };
 

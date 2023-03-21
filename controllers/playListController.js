@@ -88,10 +88,17 @@ const getPlayList = asyncWrapper(async (req, res) => {
    if (!likedSong) likedSong = { songIds: [] };
    const playListPipeline = getPlayListPipeline(likedSong, playListId);
    let playList = await Playlist.aggregate(playListPipeline);
+   const name = playList[0].name;
+   if (!name)
+      throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
    playList = await songsWithArtistNames(playList);
+   const playListWithSong = {
+      name,
+      songs: playList,
+   };
    if (!playList)
       throw new CustomError("playlist not present", StatusCodes.BAD_REQUEST);
-   res.status(StatusCodes.OK).json(playList);
+   res.status(StatusCodes.OK).json(playListWithSong);
 });
 
 const removeFromPlayList = asyncWrapper(async (req, res) => {
