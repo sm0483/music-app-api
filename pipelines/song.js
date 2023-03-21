@@ -70,6 +70,7 @@ const getAlbumPipeline = (albumId, likedSong) => {
             "artist.createdAt": 0,
             "artist.updatedAt": 0,
             "artist.__v": 0,
+            artistId: 0,
          },
       },
       {
