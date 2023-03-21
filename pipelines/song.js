@@ -5,9 +5,7 @@ const getSongPipeline = (size, likedSong, removeSong) => {
       {
          $match: {
             _id: {
-               $nin: removeSong.map((song) =>
-                  mongoose.Types.ObjectId(song?._id)
-               ),
+               $nin: removeSong.map((id) => mongoose.Types.ObjectId(id)),
             },
          },
       },

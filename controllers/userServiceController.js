@@ -8,6 +8,7 @@ const Album = require("../models/album");
 const { getSongPipeline, getAlbumPipeline } = require("../pipelines/song");
 const { getAlbumPipelineAlbum } = require("../pipelines/album");
 const { setCache, getCache } = require("../utils/redis");
+const { getLikedSongPipeline } = require("../pipelines/likedSong");
 
 // get song by query
 const getSong = asyncWrapper(async (req, res) => {
@@ -179,17 +180,13 @@ const getLikedSongs = asyncWrapper(async (req, res) => {
    const userId = req.user.id;
    if (!userId)
       throw new CustomError("Token not valid", StatusCodes.UNAUTHORIZED);
-   const LikedSongs = await Like.findOne({ userId }).populate({
-      path: "songIds",
-      select: "songName songFile artistId",
-      populate: {
-         path: "artistId",
-         select: "name",
-      },
-   });
-   if (!LikedSongs)
+   let likedSongs = await Like.findOne({ userId });
+   if (likedSongs === null) likedSongs = [];
+   const songPipeline = getLikedSongPipeline(likedSongs);
+   const songs = await Song.aggregate(songPipeline);
+   if (!likedSongs)
       throw new CustomError("Songs not found", StatusCodes.NOT_FOUND);
-   res.status(StatusCodes.OK).json(LikedSongs);
+   res.status(StatusCodes.OK).json(songs);
 });
 
 module.exports = {

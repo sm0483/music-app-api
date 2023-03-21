@@ -4,8 +4,11 @@ const CustomError = require("../error/custom");
 
 const setCache = async (key, value, size) => {
    try {
-      const newValue = JSON.stringify(value);
-      return await client.set(key, newValue, "EX", 60 * size * 6);
+      value = value.map((song) => {
+         return song._id;
+      });
+      value = JSON.stringify(value);
+      return await client.set(key, value, "EX", 60 * size * 6);
    } catch (error) {
       throw new CustomError(error.message, StatusCodes.INTERNAL_SERVER_ERROR);
    }
