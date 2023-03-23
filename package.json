@@ -10,8 +10,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "pm2-runtime start index.js",
+    "dev": "nodemon index.js",
+    "stop":"pm2 stop index.js"
   },
   "dependencies": {
     "@google-cloud/storage": "^6.9.3",
@@ -31,12 +32,13 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.1",
+    "pm2": "^5.3.0",
     "redis": "^4.6.5",
     "sharp": "^0.31.3",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21",
-    "eslint": "^8.36.0"
+    "eslint": "^8.36.0",
+    "nodemon": "^2.0.21"
   }
 }
