@@ -24,7 +24,7 @@ const getSong = asyncWrapper(async (req, res) => {
    if (removeSong === null) removeSong = [];
    const songPipeline = getSongPipeline(size, likedSong, removeSong);
    let songs = await Song.aggregate(songPipeline);
-   await setCache(userId, songs, size);
+   const response=await setCache(userId, songs, size);
    if (songs === null)
       throw new CustomError("No songs found", StatusCodes.NOT_FOUND);
    res.status(StatusCodes.OK).json(songs);
@@ -48,7 +48,7 @@ const handleLikeSong = asyncWrapper(async (req, res) => {
    if (!likedSong) {
       const newLikedSong = await Like.create({ userId, songIds: [songId] });
    } else {
-      likedSong.songIds.push(songId);
+      likedSong.songIds.addToSet(songId);
       await likedSong.save();
    }
    const songUpdateResponse = await Song.findOneAndUpdate(
@@ -74,7 +74,7 @@ const removeLikeSong = asyncWrapper(async (req, res) => {
    likedSong ? (likedSongArray = likedSong.songIds) : (likedSongArray = null);
    if (!likedSongArray || !likedSongArray.includes(songId))
       throw new CustomError("Song is not  liked", StatusCodes.BAD_REQUEST);
-   likedSong.songIds.pop(songId);
+   likedSong.songIds.pull(songId);
    await likedSong.save();
    const songUpdateResponse = await Song.findOneAndUpdate(
       { _id: songId },
@@ -105,7 +105,7 @@ const handleLikeAlbum = asyncWrapper(async (req, res) => {
    if (!likedAlbum) {
       const newLikedAlbum = await Like.create({ userId, albumIds: [albumId] });
    } else {
-      likedAlbum.albumIds.push(albumId);
+      likedAlbum.albumIds.addToSet(albumId);
       await likedAlbum.save();
    }
    const albumUpdateResponse = await Album.findOneAndUpdate(
@@ -134,7 +134,7 @@ const removeLikeAlbum = asyncWrapper(async (req, res) => {
       : (likedAlbumArray = null);
    if (!likedAlbumArray || !likedAlbumArray.includes(albumId))
       throw new CustomError("Album is not  liked", StatusCodes.BAD_REQUEST);
-   likedAlbum.albumIds.pop(albumId);
+   likedAlbum.albumIds.pull(albumId);
    await likedAlbum.save();
    const albumUpdateResponse = await Album.findOneAndUpdate(
       { _id: albumId },
