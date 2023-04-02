@@ -64,8 +64,9 @@ const start = async () => {
 start();
 
 const port = process.env.PORT || 5000;
+const app_port = process.env.APP_PORT || 5000;
 
-app.listen(port, () => console.error(`http://127.0.0.1:${port}`));
+app.listen(port, () => console.error(`http://127.0.0.1:${app_port}`));
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/artist", artistRoute);

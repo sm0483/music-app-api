@@ -10,9 +10,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2-runtime start index.js",
+    "start": " node index.js",
+    "start-pm2":"pm2 start index.js",
     "dev": "nodemon index.js",
-    "stop":"pm2 stop index.js"
+    "stop":"pm2 stop index.js",
+"start-pm2-runtime":"pm2-runtime start index.js"
   },
   "dependencies": {
     "@google-cloud/storage": "^6.9.3",

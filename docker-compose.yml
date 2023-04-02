@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music-api
+    ports:
+      - "${APP_PORT}:5000"
+    restart: always
+    volumes:
+      - .:/api
+    environment:
+      NODE_ENV: ${NODE_ENV}
