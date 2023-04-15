@@ -1,4 +1,4 @@
-# Build stage
+#Build stage
 
 FROM node:17.9.1-buster AS build
 
@@ -13,12 +13,11 @@ COPY . .
 
 # Final stage
 
-FROM node:17.9.1-buster
+FROM build AS development
 
 WORKDIR /api
 
-COPY --from=build /api/node_modules /api/node_modules
-COPY --from=build /api/package.json /api/package.json
+
 COPY --from=build /api/ /api/
 
 EXPOSE 5000

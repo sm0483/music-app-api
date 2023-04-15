@@ -9,8 +9,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 const client = require("./config/redis");
-const CustomError = require("./error/custom");
-const { StatusCodes } = require("http-status-codes");
+
 
 app.use(morgan("dev"));
 
@@ -64,9 +63,8 @@ const start = async () => {
 start();
 
 const port = process.env.PORT || 5000;
-const app_port = process.env.APP_PORT || 5000;
 
-app.listen(port, () => console.error(`http://127.0.0.1:${app_port}`));
+app.listen(port, () => console.error(`http://127.0.0.1:${port}`));
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/artist", artistRoute);
