@@ -1,6 +1,6 @@
 # Music App Server
 
-This REST API provides a powerful and flexible backend for web-based music streaming applications. With this API, developers can easily access and manage music data to power their streaming services. Whether building a new music streaming platform or enhancing an existing one, this API provides the tools needed to deliver a seamless and engaging user experience.
+This REST API provides a  flexible backend for web-based music streaming applications. With this API,developers can easily access and manage music data to power their streaming services.This API provides the tools needed to deliver a seamless and engaging user experience.
 
 ## Getting Started
 
@@ -58,14 +58,15 @@ This API provides several endpoints for accessing and managing music data. Below
 
 ### User
 
-| Endpoint                            | Method | Description                 |
-| ----------------------------------- | ------ | --------------------------- |
-| `/api/v1/artist/auth/register`      | POST   | Register a new artist       |
-| `/api/v1/artist/auth/edit`          | PATCH  | Edit artist information     |
-| `/api/v1/artist/auth/edit/password` | PATCH  | Edit an artist's password   |
-| `/api/v1/artist/auth/login`         | POST   | Log in an artist            |
-| `/api/v1/artist/`                   | GET    | Retrieve artist information |
+| Endpoint                            | Method  | Description                 |
+| ----------------------------------- | ------- | --------------------------- |
+| `/api/v1/artist/auth/register`      | `POST`  | Register a new artist       |
+| `/api/v1/artist/auth/edit/password` | `PATCH` | Edit an artist's password   |
+| `/api/v1/artist/auth/edit`          | `PATCH` | Edit artist information     |
+| `/api/v1/artist/auth/login`         | `POST`  | Log in an artist            |
+| `/api/v1/artist/`                   | `GET`   | Retrieve artist information |
 
+`
 &nbsp;
 
 ### Artist
@@ -107,42 +108,42 @@ This API provides several endpoints for accessing and managing music data. Below
 
 | Endpoint                    | Method | Description                        |
 | --------------------------- | ------ | ---------------------------------- |
-| `/api/v1/genres`            | POST   | Create a new genre                 |
-| `/api/v1/genres`            | GET    | Retrieve a list of genres          |
-| `/api/v1/genres/{genre_id}` | GET    | Retrieve information about a genre |
+| `/api/v1/genres`            | `POST` | Create a new genre                 |
+| `/api/v1/genres`            | `GET`  | Retrieve a list of genres          |
+| `/api/v1/genres/{genre_id}` | `GET`  | Retrieve information about a genre |
 
-&nbsp;
+&nbsp;`
 
 ### Song
 
-| Endpoint                  | Method | Description                       |
-| ------------------------- | ------ | --------------------------------- |
-| `/api/v1/songs`           | POST   | Create a new song                 |
-| `/api/v1/songs/{song_id}` | PATCH  | Update song information           |
-| `/api/v1/songs/{song_id}` | DELETE | Delete a song                     |
-| `/api/v1/songs`           | GET    | Retrieve a list of songs          |
-| `/api/v1/songs/{song_id}` | GET    | Retrieve information about a song |
+| Endpoint                  | Method   | Description                       |
+| ------------------------- | -------- | --------------------------------- |
+| `/api/v1/songs`           | `POST`   | Create a new song                 |
+| `/api/v1/songs/{song_id}` | `PATCH`  | Update song information           |
+| `/api/v1/songs/{song_id}` | `DELETE` | Delete a song                     |
+| `/api/v1/songs`           | `GET`    | Retrieve a list of songs          |
+| `/api/v1/songs/{song_id}` | `GET`    | Retrieve information about a song |
 
 &nbsp;
 
 ### PlayList
 
-| Endpoint                             | Method | Description                       |
-| ------------------------------------ | ------ | --------------------------------- |
-| `/api/v1/playlists`                  | POST   | Create a new song                 |
-| `/api/v1/playlists/{playlist_id}`    | PATCH  | Update playlist information       |
-| `/api/v1/playlists/{playlist_id}`    | DELETE | Delete a song                     |
-| `/api/v1/playlists`                  | GET    | Retrieve a list of playlists      |
-| `/api/v1/playlists/{playlist_id}`    | GET    | Retrieve information about a song |
-| `/api/v1/playlists/remove/{song_id}` | DELETE | Remove a song from playlist       |
+| Endpoint                             | Method   | Description                       |
+| ------------------------------------ | -------- | --------------------------------- |
+| `/api/v1/playlists`                  | `POST`   | Create a new song                 |
+| `/api/v1/playlists/{playlist_id}`    | `PATCH`  | Update playlist information       |
+| `/api/v1/playlists/{playlist_id}`    | `DELETE` | Delete a song                     |
+| `/api/v1/playlists`                  | `GET`    | Retrieve a list of playlists      |
+| `/api/v1/playlists/{playlist_id}`    | `GET`    | Retrieve information about a song |
+| `/api/v1/playlists/remove/{song_id}` | `DELETE` | Remove a song from playlist       |
 
 &nbsp;
 
-### Search
+### Search`
 
 | Endpoint                 | Method | Description                                                                              |
 | ------------------------ | ------ | ---------------------------------------------------------------------------------------- |
-| `/api/v1/search/{query}` | GET    | Search for songs , playlists,song with language, song with genre or song with album name |
+| `/api/v1/search/{query}` | `GET`  | Search for songs , playlists,song with language, song with genre or song with album name |
 
 &nbsp;
 
@@ -150,21 +151,22 @@ This API provides several endpoints for accessing and managing music data. Below
 
 | Endpoint                                            | Method | Description                                     |
 | --------------------------------------------------- | ------ | ----------------------------------------------- |
-| `/api/v1/user-services/songs/like/{song_id}`        | POST   | Like a song                                     |
-| `/api/v1/user-services/songs/remove-like/{song_id}` | POST   | Remove like from a song                         |
-| `/api/v1/user-services/songs?count={count}`         | GET    | Retrieve a list of songs with a specified count |
-| `/api/v1/user-services/liked`                       | GET    | Retrieve a list of liked songs                  |
+| `/api/v1/user-services/songs/like/{song_id}`        | `POST` | Like a song                                     |
+| `/api/v1/user-services/songs/remove-like/{song_id}` | `POST` | Remove like from a song                         |
+| `/api/v1/user-services/songs?count={count}`         | `GET`  | Retrieve a list of songs with a specified count |
+| `/api/v1/user-services/liked`                       | `GET`  | Retrieve a list of liked songs                  |
 
 &nbsp;
+`
 
 ### Albums - User Services
 
 | Endpoint                                              | Method | Description                                      |
 | ----------------------------------------------------- | ------ | ------------------------------------------------ |
-| `/api/v1/user-services/albums/like/{album_id}`        | POST   | Like an album                                    |
-| `/api/v1/user-services/albums/remove-like/{album_id}` | POST   | Remove like from an album                        |
-| `/api/v1/user-services/albums/{album_id}`             | GET    | Retrieve information about an album              |
-| `/api/v1/user-services/albums?count={count}`          | GET    | Retrieve a list of albums with a specified count |
+| `/api/v1/user-services/albums/like/{album_id}`        | `POST` | Like an album                                    |
+| `/api/v1/user-services/albums/remove-like/{album_id}` | `POST` | Remove like from an album                        |
+| `/api/v1/user-services/albums/{album_id}`             | `GET`  | Retrieve information about an album              |
+| `/api/v1/user-services/albums?count={count}`          | `GET`  | Retrieve a list of albums with a specified count |
 
 &nbsp;
 
@@ -172,7 +174,7 @@ This API provides several endpoints for accessing and managing music data. Below
 
 | Endpoint                             | Method | Description                              |
 | ------------------------------------ | ------ | ---------------------------------------- |
-| `/api/v1/artist-services/album-info` | GET    | Retrieve album information for an artist |
+| `/api/v1/artist-services/album-info` | `GET`  | Retrieve album information for an artist |
 
 &nbsp;
 
