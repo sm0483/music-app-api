@@ -3636,8 +3636,8 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
 
 systeminformation@^5.7:
-  version "5.17.12"
-  resolved "https://registry.npmjs.org/systeminformation/-/systeminformation-5.17.12.tgz"
+  version "5.21.9"
+  resolved "https://registry.yarnpkg.com/systeminformation/-/systeminformation-5.21.9.tgz#59287c2371317d569cc9742f8a7df05e65d21449"
 
 tar-fs@^2.0.0, tar-fs@^2.1.1:
   version "2.1.1"
